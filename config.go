@@ -20,6 +20,8 @@ type ConfigRsp struct {
 }
 
 func (c ConfigService) start() {
+	c.try("")
+
 	d := time.Duration(c.c.ConfigRefreshIntervalSeconds) * time.Second
 	timer := time.NewTimer(d)
 	defer timer.Stop()

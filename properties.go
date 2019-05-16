@@ -31,7 +31,7 @@ func MakePropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 	}
 
 	pcf.updater = func(updated string) {
-		doc, err := gou.LoadProperties(bytes.NewBufferString(raw))
+		doc, err := gou.LoadProperties(bytes.NewBufferString(updated))
 		if err != nil {
 			logrus.Warnf("LoadProperties %v", err)
 		} else {

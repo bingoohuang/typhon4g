@@ -9,11 +9,12 @@ func (t TxtConfFile) ConfFormat() ConfFmt {
 }
 
 func MakeTxtConfFile(confFile, raw string) *TxtConfFile {
-	return &TxtConfFile{
+	tcf := &TxtConfFile{
 		BaseConf{
 			confFile:  confFile,
 			raw:       raw,
 			listeners: make([]ConfFileChangeListener, 0),
 		},
 	}
+	return tcf
 }

@@ -42,17 +42,17 @@ func (b *BaseConf) Register(listener ConfFileChangeListener) {
 }
 
 func (b *BaseConf) Unregister(listener ConfFileChangeListener) int {
-	listeners := make([]ConfFileChangeListener, 0, len(b.listeners))
+	ls := make([]ConfFileChangeListener, 0, len(b.listeners))
 	count := 0
 	for _, l := range b.listeners {
 		if l != listener {
-			listeners = append(listeners, l)
+			ls = append(ls, l)
 		} else {
 			count++
 		}
 	}
 
-	b.listeners = listeners
+	b.listeners = ls
 	return count
 }
 

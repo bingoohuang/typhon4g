@@ -13,7 +13,7 @@ type MyListener struct {
 var _ typhon4g.ConfFileChangeListener = (*MyListener)(nil)
 
 func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (string, bool) {
-	fmt.Errorf("%+v", event)
+	fmt.Println("OnChange", event)
 	return "", true
 }
 
@@ -27,5 +27,6 @@ func TestGetConf(t *testing.T) {
 	for {
 		fmt.Println("sleep 10 seconds")
 		time.Sleep(time.Duration(10) * time.Second)
+		fmt.Println(conf.String("name"))
 	}
 }

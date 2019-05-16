@@ -86,9 +86,10 @@ func (t TyphonContext) saveCaches(fcs []FileContent) {
 	for _, fc := range fcs {
 		if old, ok := t.Cache[fc.ConfFile]; ok {
 			old.Conf.TriggerChange(fc.Content, time.Now())
+		} else {
+			fc.init()
+			t.Cache[fc.ConfFile] = &fc
 		}
-		fc.init()
-		t.Cache[fc.ConfFile] = &fc
 	}
 	t.cacheLock.Unlock()
 }
