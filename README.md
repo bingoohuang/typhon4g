@@ -37,6 +37,33 @@ typhon client for golang
 1. Use the api to access config
 
     ```go
-    conf := typhon4g.GetProperties("hello.properties")
-    fmt.Println(conf.String("name"))
+    prop := typhon4g.GetProperties("hello.properties")
+	fmt.Println("name:", prop.String("name"))
+	fmt.Println("home:", prop.StringDefault("home", "中国"))
+	fmt.Println("age:", prop.Int("age"))
+	fmt.Println("adult", prop.Bool("adult"))
+ 
+ 	hello := typhon4g.GetConfFile("hello.json")
+ 	fmt.Println("hello.json:", hello.Raw())
+    ```
+    
+2. Add the listener to the change of config file
+
+    ```go
+    type MyListener struct{}
+    
+    // Make sure that MyListener implements the interface typhon4g.ConfFileChangeListener
+    var _ typhon4g.ConfFileChangeListener = (*MyListener)(nil)
+    
+    func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok bool) {
+        fmt.Println("OnChange", event)
+        // eat your own dog food here
+        return "your message", true /*  true to means changed OK */
+    }
+ 
+ 
+    // In your code, register the listener instance
+    var listener MyListener
+    prop.Register(&listener)
+ 
     ```

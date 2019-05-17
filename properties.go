@@ -52,12 +52,12 @@ func (p PropertiesConfFile) String(name string) string {
 }
 
 func (p PropertiesConfFile) StringDefault(name, defaultValue string) string {
-	v := p.Raw()
-	if v == "" {
+	value := p.String(name)
+	if value == "" {
 		return defaultValue
 	}
-
-	return p.String(name)
+	
+	return value
 }
 
 func (p PropertiesConfFile) Bool(name string) bool {
