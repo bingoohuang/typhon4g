@@ -37,13 +37,16 @@ typhon client for golang
 1. Use the api to access config
 
     ```go
-    prop := typhon4g.GetProperties("hello.properties")
+	prop, err := typhon4g.GetProperties("hello.properties")
+	if err != nil {
+		logrus.Panic(err)
+	}
 	fmt.Println("name:", prop.String("name"))
 	fmt.Println("home:", prop.StringDefault("home", "中国"))
 	fmt.Println("age:", prop.Int("age"))
 	fmt.Println("adult", prop.Bool("adult"))
  
- 	hello := typhon4g.GetConfFile("hello.json")
+ 	hello, _ := typhon4g.GetConfFile("hello.json")
  	fmt.Println("hello.json:", hello.Raw())
     ```
     

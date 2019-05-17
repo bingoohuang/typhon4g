@@ -35,9 +35,9 @@ func (c ConfigService) start() {
 	}
 }
 
-func (c ConfigService) try(confFile string) {
+func (c ConfigService) try(confFile string) bool {
 	urls := c.c.ConfigServerUrls
-	gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
+	return gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
 		return c.tryUrl(url, confFile, &c.setting)
 	})
 }

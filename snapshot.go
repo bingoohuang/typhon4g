@@ -4,7 +4,6 @@ import (
 	"github.com/bingoohuang/gou"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 )
 
@@ -12,33 +11,10 @@ type SnapshotService struct {
 	c *TyphonContext
 }
 
-func (s SnapshotService) init() {
-	dir := s.c.SnapshotsDir
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-			logrus.Warnf("failed to create snapshot dir %s, error %v", dir, err)
-			return
-		}
-	}
-
-	files, err := ioutil.ReadDir(dir)
+func (s SnapshotService) load(file string) error {
+	content, err := ioutil.ReadFile(filepath.Join(s.c.SnapshotsDir, file))
 	if err != nil {
-		logrus.Warnf("failed to read snapshot dir %v", err)
-		return
-	}
-
-	for _, f := range files {
-		if !f.IsDir() {
-			s.load(dir, f.Name())
-		}
-	}
-}
-
-func (s SnapshotService) load(dir, file string) {
-	content, err := ioutil.ReadFile(filepath.Join(dir, file))
-	if err != nil {
-		logrus.Warnf("failed to read %s, error %v", file, err)
-		return
+		return err
 	}
 
 	raw := string(content)
@@ -50,6 +26,7 @@ func (s SnapshotService) load(dir, file string) {
 	}
 
 	s.c.recoverCache(fc)
+	return nil
 }
 
 func (s SnapshotService) save(confFile, content string) {

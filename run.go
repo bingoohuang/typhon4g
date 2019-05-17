@@ -14,8 +14,6 @@ type Runner struct {
 }
 
 func (r Runner) Start() {
-	r.snapshot.init()
-
 	r.initConfigServerUrls()
 
 	r.meta.configServerAddrUpdater = func(addr string) { r.snapshot.saveConfigServers(addr) }
@@ -40,15 +38,20 @@ func (r Runner) initConfigServerUrls() {
 	}
 }
 
-func (r Runner) GetProperties(confFile string) *PropertiesConfFile {
-	return r.GetConfFile(confFile).(*PropertiesConfFile)
+func (r Runner) GetProperties(confFile string) (*PropertiesConfFile, error) {
+	c, e := r.GetConfFile(confFile)
+	return c.(*PropertiesConfFile), e
 }
 
-func (r Runner) GetConfFile(confFile string) ConfFile {
+func (r Runner) GetConfFile(confFile string) (ConfFile, error) {
 	cf := r.context.LoadConfFile(confFile)
 	if cf == nil {
-		r.config.try(confFile)
+		if !r.config.try(confFile) {
+			if err := r.snapshot.load(confFile); err != nil {
+				return nil, err
+			}
+		}
 	}
 
-	return r.context.LoadConfFile(confFile)
+	return r.context.LoadConfFile(confFile), nil
 }

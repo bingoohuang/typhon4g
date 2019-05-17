@@ -42,11 +42,11 @@ func CreateRunner(contextFile string) (*Runner, error) {
 	}, nil
 }
 
-func GetProperties(confFile string) *PropertiesConfFile {
+func GetProperties(confFile string) (*PropertiesConfFile, error) {
 	return runner.GetProperties(confFile)
 }
 
-func GetConfFile(confFile string) ConfFile {
+func GetConfFile(confFile string) (ConfFile, error) {
 	return runner.GetConfFile(confFile)
 }
 
@@ -152,8 +152,30 @@ func loadTyphonContext(confFile string) (*TyphonContext, error) {
 		Cache:        make(map[string]*FileContent),
 	}
 
+	makeSnapshotDir(c.SnapshotsDir)
+
 	c.MetaServerUrls = funk.Map(gou.SplitN(c.MetaServers, ",", true, true),
 		func(meta string) string { return meta + "/meta" }).([]string)
 
 	return c, nil
+}
+
+func makeSnapshotDir(dir string) {
+	st, err := os.Stat(dir)
+	if err == nil {
+		if st.IsDir() {
+			return
+		} else {
+			logrus.Panicf("make sure that snapshot dir %s is a directory", dir)
+		}
+	}
+
+	if os.IsNotExist(err) {
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			logrus.Panicf("failed to create snapshot dir %s, error %v", dir, err)
+		}
+		return
+	}
+
+	logrus.Panicf("failed to stat snapshot dir %s, error %v", dir, err)
 }

@@ -2,6 +2,7 @@ package typhon4g_test
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"testing"
 	"time"
 	"typhon4g"
@@ -19,13 +20,19 @@ func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok
 }
 
 func TestGetConf(t *testing.T) {
-	prop := typhon4g.GetProperties("hello.properties")
+	prop, err := typhon4g.GetProperties("hello.properties")
+	if err != nil {
+		logrus.Panic(err)
+	}
 	fmt.Println("name:", prop.String("name"))
 	fmt.Println("home:", prop.StringDefault("home", "中国"))
 	fmt.Println("age:", prop.Int("age"))
 	fmt.Println("adult", prop.Bool("adult"))
 
-	hello := typhon4g.GetConfFile("hello.json")
+	hello, err := typhon4g.GetConfFile("hello.json")
+	if err != nil {
+		logrus.Panic(err)
+	}
 	fmt.Println("hello.json:", hello.Raw())
 
 	var listener MyListener
