@@ -19,7 +19,9 @@ func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (string, bool) 
 
 func TestGetConf(t *testing.T) {
 	conf := typhon4g.GetProperties("hello.properties")
+	hello := typhon4g.GetConfFile("hello.json")
 	fmt.Println(conf.String("name"))
+	fmt.Println("hello.json:", hello.Raw())
 
 	var listener MyListener
 	conf.Register(&listener)
@@ -28,5 +30,7 @@ func TestGetConf(t *testing.T) {
 		fmt.Println("sleep 10 seconds")
 		time.Sleep(time.Duration(10) * time.Second)
 		fmt.Println(conf.String("name"))
+
+		fmt.Println("hello.json:", hello.Raw())
 	}
 }

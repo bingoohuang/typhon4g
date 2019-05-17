@@ -1,6 +1,7 @@
 package typhon4g
 
 import (
+	"github.com/bingoohuang/gou"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
@@ -45,7 +46,7 @@ func (s SnapshotService) load(dir, file string) {
 		AppID:    s.c.AppID,
 		ConfFile: file,
 		Content:  raw,
-		Crc:      "0",
+		Crc:      gou.Checksum(content),
 	}
 
 	s.c.recoverCache(fc)

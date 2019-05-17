@@ -13,7 +13,7 @@ type Runner struct {
 	polling  *PollingService
 }
 
-func (r Runner) start() {
+func (r Runner) Start() {
 	r.snapshot.init()
 
 	r.initConfigServerUrls()
@@ -38,4 +38,17 @@ func (r Runner) initConfigServerUrls() {
 	if configServers := r.snapshot.loadConfigServers(); configServers != "" {
 		r.context.ConfigServerUrls = CreateConfigServerUrls(r.context.AppID, configServers)
 	}
+}
+
+func (r Runner) GetProperties(confFile string) *PropertiesConfFile {
+	return r.GetConfFile(confFile).(*PropertiesConfFile)
+}
+
+func (r Runner) GetConfFile(confFile string) ConfFile {
+	cf := r.context.LoadConfFile(confFile)
+	if cf == nil {
+		r.config.try(confFile)
+	}
+
+	return r.context.LoadConfFile(confFile)
 }

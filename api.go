@@ -2,12 +2,15 @@ package typhon4g
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"github.com/bingoohuang/gou"
 	"github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
 	"github.com/thoas/go-funk"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -15,35 +18,36 @@ import (
 var runner *Runner
 
 func init() {
-	confFile := "etc/typhon-context.properties"
-	context, err := LoadTyphonContext(confFile)
+	r, err := CreateRunner("etc/typhon-context.properties")
 	if err != nil {
-		logrus.Warnf("unable to load %s, %v", confFile, err)
+		logrus.Warnf("unable to create typhon runner %v", err)
 		return
 	}
 
-	r := &Runner{
+	r.Start()
+	runner = r
+}
+
+func CreateRunner(contextFile string) (*Runner, error) {
+	context, err := loadTyphonContext(contextFile)
+	if err != nil {
+		return nil, fmt.Errorf("unable to load %s, %v", contextFile, err)
+	}
+
+	return &Runner{
 		context:  context,
 		snapshot: &SnapshotService{c: context},
 		meta:     &MetaService{c: context},
 		config:   &ConfigService{c: context},
-	}
-
-	r.start()
-	runner = r
+	}, nil
 }
 
 func GetProperties(confFile string) *PropertiesConfFile {
-	return GetConfFile(confFile).(*PropertiesConfFile)
+	return runner.GetProperties(confFile)
 }
 
 func GetConfFile(confFile string) ConfFile {
-	cf := runner.context.LoadConfFile(confFile)
-	if cf == nil {
-		runner.config.try(confFile)
-	}
-
-	return runner.context.LoadConfFile(confFile)
+	return runner.GetConfFile(confFile)
 }
 
 type TyphonContext struct {
@@ -110,7 +114,7 @@ func (t TyphonContext) iterateCache(fn func(confFile string, fileContext *FileCo
 	}
 }
 
-func LoadTyphonContext(confFile string) (*TyphonContext, error) {
+func loadTyphonContext(confFile string) (*TyphonContext, error) {
 	if _, err := os.Stat(confFile); err != nil {
 		return nil, err
 	}
@@ -125,11 +129,16 @@ func LoadTyphonContext(confFile string) (*TyphonContext, error) {
 		return nil, err
 	}
 
-	sd := d.StringDefault("SnapshotsDir", "~/.typhon-client/snapshots")
+	appID := d.String("appID")
+	if appID == "" {
+		return nil, errors.New("appID required")
+	}
+
+	sd := d.StringDefault("snapshotsDir", "~/.typhon-client/snapshots")
 	snapshotsDir, _ := homedir.Expand(sd)
 
 	c := &TyphonContext{
-		AppID:       d.String("appID"),
+		AppID:       appID,
 		MetaServers: d.StringDefault("metaServers", "http://127.0.0.1:11683"),
 
 		ConnectTimeoutMillis:         d.IntDefault("connectTimeoutMillis", 1000),
@@ -139,7 +148,7 @@ func LoadTyphonContext(confFile string) (*TyphonContext, error) {
 		ConfigRefreshIntervalSeconds: d.IntDefault("configRefreshIntervalSeconds", 300),
 		MetaRefreshIntervalSeconds:   d.IntDefault("metaRefreshIntervalSeconds", 300),
 
-		SnapshotsDir: snapshotsDir,
+		SnapshotsDir: filepath.Join(snapshotsDir, appID),
 		Cache:        make(map[string]*FileContent),
 	}
 
