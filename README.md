@@ -32,6 +32,10 @@ typhon client for golang
     
     # Meta主动刷新时间间隔，默认300秒（5分钟）
     # metaRefreshIntervalSeconds = 300
+
+    # 推送配置所需要的用户名密码
+    # postAuth = admin:admin
+    postAuth = admin:admin
     ```
 
 1. Use the api to access config
@@ -50,7 +54,7 @@ typhon client for golang
  	fmt.Println("hello.json:", hello.Raw())
     ```
     
-2. Add the listener to the change of config file
+1. Add the listener to the change of config file
 
     ```go
     type MyListener struct{}
@@ -69,4 +73,23 @@ typhon client for golang
     var listener MyListener
     prop.Register(&listener)
  
+    ```
+
+1. Post Conf to the server
+    
+    ```go
+    crc, err := typhon4g.PostConf("post.json", `{"name":"bingoo","age":123}`, "all")
+    fmt.Println("crc:", crc)
+    ```
+
+1. Query the reported log by 
+
+    ```go
+	items, err := typhon4g.GetListenerResults("hello.properties", crc)
+	if err != nil {
+		logrus.Panicf("error %v", err)
+	}
+
+	fmt.Println("items", items) q  q
+    
     ```

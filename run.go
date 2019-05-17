@@ -55,3 +55,11 @@ func (r Runner) GetConfFile(confFile string) (ConfFile, error) {
 
 	return r.context.LoadConfFile(confFile), nil
 }
+
+func (r Runner) PostConf(confFile, raw, clientIps string) (string, error) {
+	return r.config.PostConf(confFile, raw, clientIps)
+}
+
+func (r Runner) GetListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
+	return r.config.GetListenerResults(confFile, crc)
+}

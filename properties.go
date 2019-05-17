@@ -56,7 +56,7 @@ func (p PropertiesConfFile) StringDefault(name, defaultValue string) string {
 	if value == "" {
 		return defaultValue
 	}
-	
+
 	return value
 }
 

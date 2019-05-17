@@ -1,6 +1,8 @@
 package typhon4g
 
-import "time"
+import (
+	"time"
+)
 
 type FileContent struct {
 	AppID    string `json:"appID"`
@@ -38,6 +40,22 @@ type ClientReportItem struct {
 	Crc      string `json:"crc"`
 }
 
+type ClientReportRspItem struct {
+	Id       string `json:"id"`
+	AppID    string `json:"appID"`
+	Host     string `json:"host"`
+	Pid      string `json:"pid"`
+	Bin      string `json:"bin"`
+	ConfFile string `json:"confFile"`
+	Crc      string `json:"crc"`
+	ClientReportItem
+}
+
+type ClientReportRsp struct {
+	RspBase
+	Data []ClientReportRspItem `json:"data"`
+}
+
 type ClientReport struct {
 	Host string `json:"host"`
 	Pid  string `json:"pid"`
@@ -49,4 +67,13 @@ type ClientReport struct {
 type RspBase struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
+}
+
+type ReqBody struct {
+	Data string `json:"data"`
+}
+
+type Rsp struct {
+	RspBase
+	Crc string `json:"crc"`
 }

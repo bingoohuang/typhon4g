@@ -2,6 +2,7 @@ package typhon4g_test
 
 import (
 	"fmt"
+	"github.com/bingoohuang/gou"
 	"github.com/sirupsen/logrus"
 	"testing"
 	"time"
@@ -38,11 +39,25 @@ func TestGetConf(t *testing.T) {
 	var listener MyListener
 	prop.Register(&listener)
 
-	for {
+	r := gou.RandomNum(3)
+	crc, err := typhon4g.PostConf("hello.properties", "name=bingoo\nage="+r+"\n", "all")
+	if err != nil {
+		logrus.Panicf("error %v", err)
+	}
+	fmt.Println("crc:", crc)
+
+	for i := 0; i < 1; i++ {
 		fmt.Println("sleep 10 seconds")
 		time.Sleep(time.Duration(10) * time.Second)
 		fmt.Println(prop.String("name"))
 
 		fmt.Println("hello.json:", hello.Raw())
 	}
+
+	items, err := typhon4g.GetListenerResults("hello.properties", crc)
+	if err != nil {
+		logrus.Panicf("error %v", err)
+	}
+
+	fmt.Println("items", items)
 }

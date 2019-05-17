@@ -2,6 +2,7 @@ package typhon4g
 
 import (
 	"github.com/bingoohuang/gou"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
@@ -37,9 +38,11 @@ func (c ConfigService) start() {
 
 func (c ConfigService) try(confFile string) bool {
 	urls := c.c.ConfigServerUrls
-	return gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
+	ok, _ := gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
 		return c.tryUrl(url, confFile, &c.setting)
 	})
+
+	return ok
 }
 
 func (c ConfigService) tryUrl(url, confFile string, setting *gou.UrlHttpSettings) bool {
@@ -84,7 +87,7 @@ func (c ConfigService) createConfFileCrcs() string {
 
 func (c ConfigService) uploadReport(report *ClientReport) {
 	urls := c.c.ConfigServerUrls
-	_ = gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
+	_, _ = gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
 		return c.tryUpload(url, report)
 	})
 }
@@ -96,4 +99,59 @@ func (c ConfigService) tryUpload(url string, report *ClientReport) bool {
 	logrus.Infof("report response %s, error %v", string(rspBody), err)
 
 	return rsp.Status == 200
+}
+
+func (c ConfigService) PostConf(confFile, raw, clientIps string) (string, error) {
+	urls := c.c.ConfigServerUrls
+	ok, res := gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) (bool, interface{}) {
+		return c.tryPost(url, confFile, raw, clientIps)
+	})
+
+	if ok && res != nil {
+		return res.(string), nil
+	}
+
+	return "", errors.New("failed to post")
+}
+
+func (c ConfigService) tryPost(url, confFile, raw, clientIps string) (bool, interface{}) {
+	postUrl := strings.Replace(url, "/client/config/", "/admin/release/", 1) + "/" + confFile + "?clientIps=" + clientIps
+	req := ReqBody{Data: raw}
+	var rsp Rsp
+
+	_, _ = gou.RestPostFn(postUrl, req, &rsp, func(r *gou.UrlHttpRequest) error {
+		if c.c.PostAuth != "" {
+			usr, pas := gou.Split2(c.c.PostAuth, ":", true, false)
+			r.SetBasicAuth(usr, pas)
+		}
+		return nil
+	})
+
+	return rsp.Status == 200, rsp.Crc
+}
+
+func (c ConfigService) GetListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
+	urls := c.c.ConfigServerUrls
+	ok, res := gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) (bool, interface{}) {
+		return c.tryGetListenerResults(url, confFile, crc)
+	})
+
+	if ok && res != nil {
+		return res.([]ClientReportRspItem), nil
+	}
+
+	return nil, errors.New("failed to GetListenerResults")
+}
+
+func (c ConfigService) tryGetListenerResults(url, confFile, crc string) (bool, interface{}) {
+	reportUrl := strings.Replace(url, "/config/", "/report/", 1) + "?confFile=" + confFile + "&crc=" + crc
+
+	var rsp ClientReportRsp
+	err := gou.RestGetV2(reportUrl, &rsp, &c.setting)
+	if err != nil || rsp.Status != 200 {
+		logrus.Warnf("fail to tryGetListenerResults %s, error %v", reportUrl, err)
+		return false, nil
+	}
+
+	return true, rsp.Data
 }

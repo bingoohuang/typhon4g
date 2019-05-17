@@ -15,7 +15,7 @@ func (p PollingService) startPolling() {
 
 	for {
 		urls := p.c.ConfigServerUrls
-		ok := gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
+		ok, _ := gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
 			pollUrl := strings.Replace(url, "/config/", "/notify/", 1)
 			return p.tryUrl(pollUrl, "", &p.setting)
 		})
