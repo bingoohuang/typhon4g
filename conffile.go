@@ -19,7 +19,7 @@ type ConfFile interface {
 	Unregister(ConfFileChangeListener) int
 	UnregisterAll()
 
-	TriggerChange(newConf string, changedTime time.Time)
+	TriggerChange(old, new *FileContent, changedTime time.Time) []ClientReportItem
 }
 
 func NewConfFile(confFile, raw string) ConfFile {

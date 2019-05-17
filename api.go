@@ -85,17 +85,34 @@ func (t TyphonContext) getCache(confFile string) ConfFile {
 	return nil
 }
 
-func (t TyphonContext) saveCaches(fcs []FileContent) {
+func (t TyphonContext) saveCaches(fcs []FileContent) *ClientReport {
+	items := make([]ClientReportItem, 0)
+
 	t.cacheLock.Lock()
 	for _, fc := range fcs {
 		if old, ok := t.Cache[fc.ConfFile]; ok {
-			old.Conf.TriggerChange(fc.Content, time.Now())
+			subs := old.Conf.TriggerChange(old, &fc, time.Now())
+			if subs != nil {
+				items = append(items, subs...)
+			}
 		} else {
 			fc.init()
 			t.Cache[fc.ConfFile] = &fc
 		}
 	}
 	t.cacheLock.Unlock()
+
+	if len(items) == 0 {
+		return nil
+	}
+
+	hostname, _ := os.Hostname()
+	return &ClientReport{
+		Host:  hostname,
+		Pid:   fmt.Sprintf("%d", os.Getpid()),
+		Bin:   os.Args[0],
+		Items: items,
+	}
 }
 
 func (t TyphonContext) recoverCache(fc *FileContent) {

@@ -60,17 +60,27 @@ func (b *BaseConf) UnregisterAll() {
 	b.listeners = b.listeners[0:0]
 }
 
-func (b *BaseConf) TriggerChange(newConf string, changedTime time.Time) {
+func (b *BaseConf) TriggerChange(old, new *FileContent, changedTime time.Time) []ClientReportItem {
 	v := b.Raw()
-	b.UpdateRaw(newConf)
+	b.UpdateRaw(new.Content)
 
+	if len(b.listeners) == 0 {
+		return nil
+	}
+
+	items := make([]ClientReportItem, 0)
 	for _, l := range b.listeners {
-		l.OnChange(ConfFileChangeEvent{
+		msg, ok := l.OnChange(ConfFileChangeEvent{
 			ConfFile:       b.confFile,
 			ConfFileFormat: Properties,
 			Old:            v,
-			Current:        newConf,
+			Current:        new.Content,
 			ChangedTime:    time.Now(),
 		})
+
+		items = append(items, ClientReportItem{Msg: msg, Ok: ok, ConfFile: b.confFile, Crc: new.Crc,
+			Time: time.Now().Format(time.RFC3339)})
 	}
+
+	return items
 }

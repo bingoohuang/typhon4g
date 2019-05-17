@@ -63,7 +63,10 @@ func (c ConfigService) tryUrl(url, confFile string, setting *gou.UrlHttpSettings
 
 	if len(rsp.Data) > 0 {
 		c.updateFn(rsp.Data)
-		c.c.saveCaches(rsp.Data)
+		report := c.c.saveCaches(rsp.Data)
+		if report != nil {
+			c.uploadReport(report)
+		}
 		return true
 	}
 
@@ -77,4 +80,20 @@ func (c ConfigService) createConfFileCrcs() string {
 	})
 
 	return strings.Join(confFileCrc, ",")
+}
+
+func (c ConfigService) uploadReport(report *ClientReport) {
+	urls := c.c.ConfigServerUrls
+	_ = gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
+		return c.tryUpload(url, report)
+	})
+}
+
+func (c ConfigService) tryUpload(url string, report *ClientReport) bool {
+	reportUrl := strings.Replace(url, "/config/", "/report/", 1)
+	var rsp RspBase
+	rspBody, err := gou.RestPost(reportUrl, report, &rsp)
+	logrus.Infof("report response %s, error %v", string(rspBody), err)
+
+	return rsp.Status == 200
 }
