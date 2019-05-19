@@ -90,6 +90,6 @@ typhon client for golang
 		logrus.Panicf("error %v", err)
 	}
 
-	fmt.Println("items", items) q  q
+	fmt.Println("items", items)
     
     ```
