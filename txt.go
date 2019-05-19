@@ -5,10 +5,10 @@ type TxtConfFile struct {
 }
 
 func (t TxtConfFile) ConfFormat() ConfFmt {
-	return TXT
+	return TxtFmt
 }
 
-func MakeTxtConfFile(confFile, raw string) *TxtConfFile {
+func NewTxtConfFile(confFile, raw string) *TxtConfFile {
 	tcf := &TxtConfFile{
 		BaseConf{
 			confFile:  confFile,

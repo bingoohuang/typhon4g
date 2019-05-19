@@ -20,8 +20,8 @@ func (f *FileContent) init() {
 type ConfFmt int
 
 const (
-	Properties ConfFmt = iota
-	TXT
+	PropertiesFmt ConfFmt = iota
+	TxtFmt
 )
 
 type ConfFileChangeEvent struct {

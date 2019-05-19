@@ -3,42 +3,40 @@ package typhon4g
 import (
 	"github.com/bingoohuang/gou"
 	"github.com/sirupsen/logrus"
-	"github.com/thoas/go-funk"
 	"time"
 )
 
 type MetaService struct {
-	c                       *TyphonContext
-	configServerAddrUpdater func(string)
+	C                        *TyphonContext
+	ConfigServersAddrUpdater func(string)
 }
 
-func (m MetaService) start() {
-	d := time.Duration(m.c.MetaRefreshIntervalSeconds) * time.Second
+func (m MetaService) Start() {
+	d := SecondsDuration(m.C.MetaRefreshIntervalSeconds)
 	timer := time.NewTimer(d)
 	defer timer.Stop()
 
 	for {
 		select {
 		case <-timer.C:
-			m.try()
+			m.Try()
 			timer.Reset(d)
 		}
 	}
 }
 
-func (m MetaService) try() {
+func (m MetaService) Try() {
 	var configServerUrls []string
-	urls := m.c.MetaServerUrls
-	gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
+	gou.RandomIterateSlice(m.C.MetaServerUrls, func(url string) bool {
 		var err error
-		configServerUrls, err = m.tryUrl(url)
+		configServerUrls, err = m.TryUrl(url)
 		if err != nil {
-			logrus.Warnf("fail to tryUrl %v", err)
+			logrus.Warnf("fail to TryUrl %v", err)
 			return false
 		}
 
 		if len(configServerUrls) == 0 {
-			logrus.Warnf("fail to tryUrl empty")
+			logrus.Warnf("fail to TryUrl empty")
 			return false
 		}
 
@@ -46,7 +44,7 @@ func (m MetaService) try() {
 	})
 
 	if len(configServerUrls) > 0 {
-		m.c.ConfigServerUrls = configServerUrls
+		m.C.ConfigServerUrls = configServerUrls
 	}
 }
 
@@ -56,18 +54,12 @@ type MetaRsp struct {
 	Data    string `json:"data"`
 }
 
-func (m MetaService) tryUrl(url string) ([]string, error) {
+func (m MetaService) TryUrl(url string) ([]string, error) {
 	var rsp MetaRsp
 	if err := gou.RestGet(url, &rsp); err != nil {
 		return nil, err
 	}
 
-	m.configServerAddrUpdater(rsp.Data)
-	return CreateConfigServerUrls(m.c.AppID, rsp.Data), nil
-}
-
-func CreateConfigServerUrls(appID string, configServers string) []string {
-	urls := gou.SplitN(configServers, ",", true, true)
-	mf := func(url string) string { return url + "/client/config/" + appID }
-	return funk.Map(urls, mf).([]string)
+	m.ConfigServersAddrUpdater(rsp.Data)
+	return m.C.CreateConfigServerUrls(rsp.Data), nil
 }

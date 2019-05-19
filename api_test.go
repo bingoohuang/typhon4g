@@ -21,12 +21,12 @@ func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok
 }
 
 func TestGetConf(t *testing.T) {
-	prop, err := typhon4g.GetProperties("hello.properties")
+	prop, err := typhon4g.Properties("hello.properties")
 	if err != nil {
 		logrus.Panic(err)
 	}
-	fmt.Println("name:", prop.String("name"))
-	fmt.Println("home:", prop.StringDefault("home", "中国"))
+	fmt.Println("name:", prop.Str("name"))
+	fmt.Println("home:", prop.StrDefault("home", "中国"))
 	fmt.Println("age:", prop.Int("age"))
 	fmt.Println("adult", prop.Bool("adult"))
 
@@ -39,8 +39,7 @@ func TestGetConf(t *testing.T) {
 	var listener MyListener
 	prop.Register(&listener)
 
-	r := gou.RandomNum(3)
-	crc, err := typhon4g.PostConf("hello.properties", "name=bingoo\nage="+r+"\n", "all")
+	crc, err := typhon4g.PostConf("hello.properties", "name=bingoo\nage="+gou.RandomNum(3)+"\n", "all")
 	if err != nil {
 		logrus.Panicf("error %v", err)
 	}
@@ -48,13 +47,13 @@ func TestGetConf(t *testing.T) {
 
 	for i := 0; i < 1; i++ {
 		fmt.Println("sleep 10 seconds")
-		time.Sleep(time.Duration(10) * time.Second)
-		fmt.Println(prop.String("name"))
+		time.Sleep(typhon4g.SecondsDuration(10))
+		fmt.Println(prop.Str("name"))
 
 		fmt.Println("hello.json:", hello.Raw())
 	}
 
-	items, err := typhon4g.GetListenerResults("hello.properties", crc)
+	items, err := typhon4g.ListenerResults("hello.properties", crc)
 	if err != nil {
 		logrus.Panicf("error %v", err)
 	}

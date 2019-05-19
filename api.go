@@ -3,7 +3,6 @@ package typhon4g
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 var runner *Runner
@@ -11,7 +10,7 @@ var runner *Runner
 func init() {
 	r, err := CreateRunner("etc/typhon-context.properties")
 	if err != nil {
-		logrus.Warnf("unable to create typhon runner %v", err)
+		logrus.Warnf("unable to create default typhon runner %v", err)
 		return
 	}
 
@@ -20,51 +19,31 @@ func init() {
 }
 
 func CreateRunner(contextFile string) (*Runner, error) {
-	context, err := loadTyphonContext(contextFile)
+	context, err := LoadContextFile(contextFile)
 	if err != nil {
-		return nil, fmt.Errorf("unable to load %s, %v", contextFile, err)
+		return nil, fmt.Errorf("unable to Load %s, %v", contextFile, err)
 	}
 
 	return &Runner{
-		context:  context,
-		snapshot: &SnapshotService{c: context},
-		meta:     &MetaService{c: context},
-		config:   &ConfigService{c: context},
+		C:               context,
+		SnapshotService: &SnapshotService{C: context},
+		MetaService:     &MetaService{C: context},
+		ConfigService:   &ConfigService{C: context},
 	}, nil
 }
 
-func GetProperties(confFile string) (*PropertiesConfFile, error) {
-	return runner.GetProperties(confFile)
+func Properties(confFile string) (*PropertiesConfFile, error) {
+	return runner.Properties(confFile)
 }
 
 func GetConfFile(confFile string) (ConfFile, error) {
-	return runner.GetConfFile(confFile)
+	return runner.ConfFile(confFile)
 }
 
 func PostConf(confFile, raw, clientIps string) (string, error) {
 	return runner.PostConf(confFile, raw, clientIps)
 }
 
-func GetListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
-	return runner.GetListenerResults(confFile, crc)
-}
-
-func makeSnapshotDir(dir string) {
-	st, err := os.Stat(dir)
-	if err == nil {
-		if st.IsDir() {
-			return
-		} else {
-			logrus.Panicf("make sure that snapshot dir %s is a directory", dir)
-		}
-	}
-
-	if os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-			logrus.Panicf("failed to create snapshot dir %s, error %v", dir, err)
-		}
-		return
-	}
-
-	logrus.Panicf("failed to stat snapshot dir %s, error %v", dir, err)
+func ListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
+	return runner.ListenerResults(confFile, crc)
 }

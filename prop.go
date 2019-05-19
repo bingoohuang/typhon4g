@@ -1,8 +1,8 @@
 package typhon4g
 
 type Prop interface {
-	String(name string) string
-	StringDefault(name, defaultValue string) string
+	Str(name string) string
+	StrDefault(name, defaultValue string) string
 
 	Bool(name string) bool
 	BoolDefault(name string, defaultValue bool) bool

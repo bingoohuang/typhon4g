@@ -41,12 +41,12 @@ typhon client for golang
 1. Use the api to access config
 
     ```go
-	prop, err := typhon4g.GetProperties("hello.properties")
+	prop, err := typhon4g.Properties("hello.properties")
 	if err != nil {
 		logrus.Panic(err)
 	}
-	fmt.Println("name:", prop.String("name"))
-	fmt.Println("home:", prop.StringDefault("home", "中国"))
+	fmt.Println("name:", prop.Str("name"))
+	fmt.Println("home:", prop.StrDefault("home", "中国"))
 	fmt.Println("age:", prop.Int("age"))
 	fmt.Println("adult", prop.Bool("adult"))
  
@@ -85,7 +85,7 @@ typhon client for golang
 1. Query the reported log by 
 
     ```go
-	items, err := typhon4g.GetListenerResults("hello.properties", crc)
+	items, err := typhon4g.ListenerResults("hello.properties", crc)
 	if err != nil {
 		logrus.Panicf("error %v", err)
 	}

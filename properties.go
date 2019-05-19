@@ -9,12 +9,12 @@ import (
 
 type PropertiesConfFile struct {
 	BaseConf
-	doc *gou.PropertiesDoc
+	Doc *gou.PropertiesDoc
 }
 
 var _ Prop = (*PropertiesConfFile)(nil)
 
-func MakePropertiesConfFile(confFile, raw string) *PropertiesConfFile {
+func NewPropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 	doc, err := gou.LoadProperties(bytes.NewBufferString(raw))
 	if err != nil {
 		logrus.Warnf("LoadProperties %v", err)
@@ -27,7 +27,7 @@ func MakePropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 			confFile:  confFile,
 			listeners: make([]ConfFileChangeListener, 0),
 		},
-		doc: doc,
+		Doc: doc,
 	}
 
 	pcf.updater = func(updated string) {
@@ -35,7 +35,7 @@ func MakePropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 		if err != nil {
 			logrus.Warnf("LoadProperties %v", err)
 		} else {
-			pcf.doc = doc
+			pcf.Doc = doc
 		}
 	}
 
@@ -43,16 +43,16 @@ func MakePropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 }
 
 func (p PropertiesConfFile) ConfFormat() ConfFmt {
-	return Properties
+	return PropertiesFmt
 }
 
-func (p PropertiesConfFile) String(name string) string {
-	value, _ := p.doc.Get(name)
+func (p PropertiesConfFile) Str(name string) string {
+	value, _ := p.Doc.Get(name)
 	return value
 }
 
-func (p PropertiesConfFile) StringDefault(name, defaultValue string) string {
-	value := p.String(name)
+func (p PropertiesConfFile) StrDefault(name, defaultValue string) string {
+	value := p.Str(name)
 	if value == "" {
 		return defaultValue
 	}
@@ -61,7 +61,7 @@ func (p PropertiesConfFile) StringDefault(name, defaultValue string) string {
 }
 
 func (p PropertiesConfFile) Bool(name string) bool {
-	v := p.StringDefault(name, "false")
+	v := p.StrDefault(name, "false")
 	val, err := strconv.ParseBool(v)
 	if err != nil {
 		logrus.Warnf("parse bool fail for %s", v)
@@ -71,7 +71,7 @@ func (p PropertiesConfFile) Bool(name string) bool {
 }
 
 func (p PropertiesConfFile) BoolDefault(name string, defaultValue bool) bool {
-	v := p.StringDefault(name, "")
+	v := p.StrDefault(name, "")
 	if v == "" {
 		return defaultValue
 	}
@@ -80,7 +80,7 @@ func (p PropertiesConfFile) BoolDefault(name string, defaultValue bool) bool {
 }
 
 func (p PropertiesConfFile) Int(name string) int {
-	v := p.StringDefault(name, "0")
+	v := p.StrDefault(name, "0")
 	val, err := strconv.ParseInt(v, 10, 64)
 	if err != nil {
 		logrus.Warnf("parse Int fail for %s", v)
@@ -91,7 +91,7 @@ func (p PropertiesConfFile) Int(name string) int {
 }
 
 func (p PropertiesConfFile) IntDefault(name string, defaultValue int) int {
-	v := p.StringDefault(name, "")
+	v := p.StrDefault(name, "")
 	if v == "" {
 		return defaultValue
 	}
@@ -100,7 +100,7 @@ func (p PropertiesConfFile) IntDefault(name string, defaultValue int) int {
 }
 
 func (p PropertiesConfFile) Int32(name string) int32 {
-	v := p.StringDefault(name, "0")
+	v := p.StrDefault(name, "0")
 	val, err := strconv.ParseInt(v, 10, 64)
 	if err != nil {
 		logrus.Warnf("parse Int32 fail for %s", v)
@@ -111,7 +111,7 @@ func (p PropertiesConfFile) Int32(name string) int32 {
 }
 
 func (p PropertiesConfFile) Int32Default(name string, defaultValue int32) int32 {
-	v := p.StringDefault(name, "")
+	v := p.StrDefault(name, "")
 	if v == "" {
 		return defaultValue
 	}
@@ -120,7 +120,7 @@ func (p PropertiesConfFile) Int32Default(name string, defaultValue int32) int32 
 }
 
 func (p PropertiesConfFile) Int64(name string) int64 {
-	v := p.StringDefault(name, "0")
+	v := p.StrDefault(name, "0")
 	val, err := strconv.ParseInt(v, 10, 64)
 	if err != nil {
 		logrus.Warnf("parse Int64 fail for %s", v)
@@ -131,7 +131,7 @@ func (p PropertiesConfFile) Int64(name string) int64 {
 }
 
 func (p PropertiesConfFile) Int64Default(name string, defaultValue int64) int64 {
-	v := p.StringDefault(name, "")
+	v := p.StrDefault(name, "")
 	if v == "" {
 		return defaultValue
 	}
@@ -140,7 +140,7 @@ func (p PropertiesConfFile) Int64Default(name string, defaultValue int64) int64 
 }
 
 func (p PropertiesConfFile) Float32(name string) float32 {
-	v := p.StringDefault(name, "0")
+	v := p.StrDefault(name, "0")
 	val, err := strconv.ParseFloat(v, 32)
 	if err != nil {
 		logrus.Warnf("parse Float32 fail for %s", v)
@@ -151,7 +151,7 @@ func (p PropertiesConfFile) Float32(name string) float32 {
 }
 
 func (p PropertiesConfFile) Float32Default(name string, defaultValue float32) float32 {
-	v := p.StringDefault(name, "")
+	v := p.StrDefault(name, "")
 	if v == "" {
 		return defaultValue
 	}
@@ -160,7 +160,7 @@ func (p PropertiesConfFile) Float32Default(name string, defaultValue float32) fl
 }
 
 func (p PropertiesConfFile) Float64(name string) float64 {
-	v := p.StringDefault(name, "0")
+	v := p.StrDefault(name, "0")
 	val, err := strconv.ParseFloat(v, 64)
 	if err != nil {
 		logrus.Warnf("parse Float64 fail for %s", v)
@@ -170,7 +170,7 @@ func (p PropertiesConfFile) Float64(name string) float64 {
 }
 
 func (p PropertiesConfFile) Float64Default(name string, defaultValue float64) float64 {
-	v := p.StringDefault(name, "")
+	v := p.StrDefault(name, "")
 	if v == "" {
 		return defaultValue
 	}

@@ -10,14 +10,13 @@ type PollingService struct {
 	ConfigService
 }
 
-func (p PollingService) startPolling() {
-	d := time.Duration(p.c.RetryNetworkSleepSeconds) * time.Second
+func (p PollingService) Start() {
+	d := time.Duration(p.C.RetryNetworkSleepSeconds) * time.Second
 
 	for {
-		urls := p.c.ConfigServerUrls
-		ok, _ := gou.IterateSlice(urls, gou.RandomIntN(uint64(len(urls))), func(url string) bool {
+		ok, _ := gou.RandomIterateSlice(p.C.ConfigServerUrls, func(url string) (bool, interface{}) {
 			pollUrl := strings.Replace(url, "/config/", "/notify/", 1)
-			return p.tryUrl(pollUrl, "", &p.setting)
+			return p.TryUrl(pollUrl, "", &p.Setting)
 		})
 
 		if !ok {

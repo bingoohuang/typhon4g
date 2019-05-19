@@ -23,12 +23,11 @@ type ConfFile interface {
 }
 
 func NewConfFile(confFile, raw string) ConfFile {
-	ext := filepath.Ext(confFile)
-	ext = strings.ToLower(ext)
+	ext := strings.ToLower(filepath.Ext(confFile))
 	switch ext {
 	case ".properties":
-		return MakePropertiesConfFile(confFile, raw)
+		return NewPropertiesConfFile(confFile, raw)
 	default:
-		return MakeTxtConfFile(confFile, raw)
+		return NewTxtConfFile(confFile, raw)
 	}
 }

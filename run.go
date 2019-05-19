@@ -1,65 +1,70 @@
 package typhon4g
 
 import (
+	"fmt"
 	"github.com/bingoohuang/gou"
-	"time"
 )
 
 type Runner struct {
-	context  *TyphonContext
-	snapshot *SnapshotService
-	config   *ConfigService
-	meta     *MetaService
-	polling  *PollingService
+	C               *TyphonContext
+	SnapshotService *SnapshotService
+	ConfigService   *ConfigService
+	MetaService     *MetaService
+	PollingService  *PollingService
 }
 
 func (r Runner) Start() {
 	r.initConfigServerUrls()
 
-	r.meta.configServerAddrUpdater = func(addr string) { r.snapshot.saveConfigServers(addr) }
-	r.meta.try()
+	r.MetaService.ConfigServersAddrUpdater = func(addr string) { r.SnapshotService.SaveMeta(addr) }
+	r.MetaService.Try()
 
-	r.config.updateFn = func(updates []FileContent) { r.snapshot.saveUpdates(updates) }
-	r.config.setting = *gou.GetDefaultSetting()
-	r.config.setting.ConnectTimeout = time.Duration(r.context.ConnectTimeoutMillis) * time.Millisecond
-	r.config.setting.ReadWriteTimeout = time.Duration(r.context.ConfigReadTimeoutMillis) * time.Millisecond
+	r.ConfigService.UpdateFn = func(updates []FileContent) { r.SnapshotService.saveUpdates(updates) }
+	r.ConfigService.Setting = *gou.GetDefaultSetting()
+	r.ConfigService.Setting.ConnectTimeout = MillisDuration(r.C.ConnectTimeoutMillis)
+	r.ConfigService.Setting.ReadWriteTimeout = MillisDuration(r.C.ConfigReadTimeoutMillis)
 
-	r.polling = &PollingService{ConfigService: *r.config}
-	r.polling.setting.ReadWriteTimeout = time.Duration(r.context.PollingReadTimeoutMillis) * time.Millisecond
+	r.PollingService = &PollingService{ConfigService: *r.ConfigService}
+	r.PollingService.Setting.ReadWriteTimeout = MillisDuration(r.C.PollingReadTimeoutMillis)
 
-	go r.meta.start()
-	go r.config.start()
-	go r.polling.startPolling()
+	go r.MetaService.Start()
+	go r.ConfigService.Start()
+	go r.PollingService.Start()
 }
 
 func (r Runner) initConfigServerUrls() {
-	if configServers := r.snapshot.loadConfigServers(); configServers != "" {
-		r.context.ConfigServerUrls = CreateConfigServerUrls(r.context.AppID, configServers)
+	if cfs := r.SnapshotService.LoadMeta(); cfs != "" {
+		r.C.ConfigServerUrls = r.C.CreateConfigServerUrls(cfs)
 	}
 }
 
-func (r Runner) GetProperties(confFile string) (*PropertiesConfFile, error) {
-	c, e := r.GetConfFile(confFile)
+func (r Runner) Properties(confFile string) (*PropertiesConfFile, error) {
+	c, e := r.ConfFile(confFile)
 	return c.(*PropertiesConfFile), e
 }
 
-func (r Runner) GetConfFile(confFile string) (ConfFile, error) {
-	cf := r.context.LoadConfFile(confFile)
-	if cf == nil {
-		if !r.config.try(confFile) {
-			if err := r.snapshot.load(confFile); err != nil {
-				return nil, err
-			}
-		}
+func (r Runner) ConfFile(confFile string) (ConfFile, error) {
+	cf := r.C.LoadConfFile(confFile)
+	if cf != nil {
+		return cf, nil
 	}
 
-	return r.context.LoadConfFile(confFile), nil
+	_, cf = r.ConfigService.Try(confFile)
+	if cf != nil {
+		return cf, nil
+	}
+
+	if cf, err := r.SnapshotService.Load(confFile); err == nil {
+		return cf, nil
+	}
+
+	return nil, fmt.Errorf("failed to Load conf file %s", confFile)
 }
 
 func (r Runner) PostConf(confFile, raw, clientIps string) (string, error) {
-	return r.config.PostConf(confFile, raw, clientIps)
+	return r.ConfigService.PostConf(confFile, raw, clientIps)
 }
 
-func (r Runner) GetListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
-	return r.config.GetListenerResults(confFile, crc)
+func (r Runner) ListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
+	return r.ConfigService.ListenerResults(confFile, crc)
 }

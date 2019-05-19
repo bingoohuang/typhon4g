@@ -64,15 +64,18 @@ func (b *BaseConf) TriggerChange(old, new *FileContent, changedTime time.Time) [
 	v := b.Raw()
 	b.UpdateRaw(new.Content)
 
+	items := make([]ClientReportItem, 0)
+
 	if len(b.listeners) == 0 {
-		return nil
+		items = append(items, ClientReportItem{Msg: "No listeners", ConfFile: b.confFile,
+			Time: time.Now().Format(time.RFC3339)})
+		return items
 	}
 
-	items := make([]ClientReportItem, 0)
 	for _, l := range b.listeners {
 		msg, ok := l.OnChange(ConfFileChangeEvent{
 			ConfFile:       b.confFile,
-			ConfFileFormat: Properties,
+			ConfFileFormat: PropertiesFmt,
 			Old:            v,
 			Current:        new.Content,
 			ChangedTime:    time.Now(),
