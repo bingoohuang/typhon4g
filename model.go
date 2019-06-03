@@ -18,16 +18,6 @@ func (f *FileContent) init() {
 	f.Conf = NewConfFile(f.ConfFile, f.Content)
 }
 
-// ConfFmt defines the conf file format.
-type ConfFmt int
-
-const (
-	// PropertiesFmt means the conf file is in *.properties format.
-	PropertiesFmt ConfFmt = iota
-	// TxtFmt means the conf file is in *.txt format.
-	TxtFmt
-)
-
 // ConfFileChangeEvent structured the change event content.
 type ConfFileChangeEvent struct {
 	ConfFile       string    `json:"confFile"`

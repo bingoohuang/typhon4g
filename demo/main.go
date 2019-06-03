@@ -3,10 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os"
+
 	"github.com/bingoohuang/gou"
 	"github.com/bingoohuang/typhon4g"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 var ty *typhon4g.Runner
