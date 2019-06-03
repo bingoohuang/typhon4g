@@ -8,10 +8,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// SnapshotService defines the snapshot service of typhon client
 type SnapshotService struct {
 	C *TyphonContext
 }
 
+// Load loads the snapshot in file.
 func (s SnapshotService) Load(file string) (ConfFile, error) {
 	content, err := ioutil.ReadFile(filepath.Join(s.C.SnapshotsDir, file))
 	if err != nil {
@@ -30,6 +32,7 @@ func (s SnapshotService) Load(file string) (ConfFile, error) {
 	return fc.Conf, nil
 }
 
+// Save saves the confFile and its content to snapshot.
 func (s SnapshotService) Save(confFile, content string) {
 	cf := filepath.Join(s.C.SnapshotsDir, confFile)
 	err := ioutil.WriteFile(cf, []byte(content), 0644)
@@ -38,6 +41,7 @@ func (s SnapshotService) Save(confFile, content string) {
 	}
 }
 
+// LoadMeta loads meta from snapshot.
 func (s SnapshotService) LoadMeta() string {
 	confFile := filepath.Join(s.C.SnapshotsDir, "_meta")
 	meta, err := ioutil.ReadFile(confFile)
@@ -49,11 +53,13 @@ func (s SnapshotService) LoadMeta() string {
 	return string(meta)
 }
 
+// SaveMeta saves the meta to snapshot.
 func (s SnapshotService) SaveMeta(configServerUrls string) {
 	s.Save("_meta", configServerUrls)
 }
 
-func (s SnapshotService) saveUpdates(fcs []FileContent) {
+// SaveUpdates saves the updates to snapshot.
+func (s SnapshotService) SaveUpdates(fcs []FileContent) {
 	for _, fc := range fcs {
 		s.Save(fc.ConfFile, fc.Content)
 	}

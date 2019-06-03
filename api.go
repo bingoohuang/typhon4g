@@ -8,7 +8,7 @@ import (
 
 // LoadStart loads and starts the typhon client.
 func LoadStart() (*Runner, error) {
-	r, err := createRunner("etc/typhon-context.properties")
+	r, err := newRunner("etc/typhon-context.properties")
 	if err != nil {
 		logrus.Warnf("unable to create default typhon typhon %v", err)
 		return nil, err
@@ -18,7 +18,7 @@ func LoadStart() (*Runner, error) {
 	return r, nil
 }
 
-func createRunner(contextFile string) (*Runner, error) {
+func newRunner(contextFile string) (*Runner, error) {
 	context, err := LoadContextFile(contextFile)
 	if err != nil {
 		return nil, fmt.Errorf("unable to Load %s, %v", contextFile, err)

@@ -130,7 +130,7 @@ func LoadContext(reader io.Reader) (*TyphonContext, error) {
 	snapshotsDir, _ := homedir.Expand(sd)
 
 	c := &TyphonContext{
-		AppID:                        MustExists(d.String("appID"), "appID"),
+		AppID:                        Required(d.String("appID"), "appID"),
 		postAuth:                     d.String("postAuth"),
 		ConnectTimeoutMillis:         d.IntDefault("connectTimeoutMillis", 1000),
 		ConfigReadTimeoutMillis:      d.IntDefault("configReadTimeoutMillis", 5000),

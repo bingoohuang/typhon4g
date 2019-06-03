@@ -7,12 +7,14 @@ import (
 	"github.com/bingoohuang/gou"
 )
 
+// PollingService defines the polling service.
 type PollingService struct {
 	ConfigService
 }
 
+// Start starts the polling service loop.
 func (p PollingService) Start() {
-	d := time.Duration(p.C.RetryNetworkSleepSeconds) * time.Second
+	d := SecondsDuration(p.C.RetryNetworkSleepSeconds)
 
 	for {
 		ok, _ := gou.RandomIterateSlice(p.C.ConfigServers, func(url string) (bool, interface{}) {

@@ -11,7 +11,7 @@ type ConfFileChangeListener interface {
 	OnChange(event ConfFileChangeEvent) (string, bool)
 }
 
-// ConfFile
+// ConfFile defines the interface of a typhon conf file.
 type ConfFile interface {
 	// Raw gets the raw content of conf file
 	Raw() string

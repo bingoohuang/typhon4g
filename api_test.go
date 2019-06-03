@@ -36,7 +36,7 @@ func TestGetConf(t *testing.T) {
 		logrus.Panic(err)
 	}
 	fmt.Println("name:", prop.Str("name"))
-	fmt.Println("home:", prop.StrDefault("home", "中国"))
+	fmt.Println("home:", prop.StrOr("home", "中国"))
 	fmt.Println("age:", prop.Int("age"))
 	fmt.Println("adult", prop.Bool("adult"))
 
