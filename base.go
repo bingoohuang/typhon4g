@@ -66,10 +66,16 @@ func (b *BaseConf) UnregisterAll() {
 }
 
 // TriggerChange trigger the changes event
-func (b *BaseConf) TriggerChange(old, new FileContent, changedTime time.Time) []ClientReportItem {
+func (b *BaseConf) TriggerChange(old, new FileContent,
+	changedTime time.Time, triggerListeners bool) []ClientReportItem {
+
 	oldRaw := b.Raw()
 	b.UpdateRaw(new.Content)
 	items := make([]ClientReportItem, 0)
+
+	if !triggerListeners {
+		return items
+	}
 
 	if len(b.listeners) == 0 {
 		items = append(items, ClientReportItem{Msg: "No listeners", ConfFile: b.confFile,

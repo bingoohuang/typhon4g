@@ -28,7 +28,7 @@ type ConfFile interface {
 	UnregisterAll()
 
 	// TriggerChange trigger the changes event
-	TriggerChange(old, new FileContent, changedTime time.Time) []ClientReportItem
+	TriggerChange(old, new FileContent, changedTime time.Time, triggerListeners bool) []ClientReportItem
 }
 
 // NewConfFile creates a ConfFile interface by confFile and raw content.
