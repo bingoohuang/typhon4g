@@ -3,11 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"os"
-
 	"github.com/bingoohuang/gou"
 	"github.com/bingoohuang/typhon4g"
 	"github.com/sirupsen/logrus"
+	"os"
+	"strings"
 )
 
 var ty *typhon4g.Runner
@@ -25,7 +25,7 @@ type MyListener struct{}
 var _ typhon4g.ConfFileChangeListener = (*MyListener)(nil)
 
 func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok bool) {
-	fmt.Println("OnChange", event)
+	fmt.Printf("OnChange: %+v\n", event)
 	// eat your own dog food here
 	return "my message:" + gou.RandString(10), true /*  true to means changed OK */
 }
@@ -36,7 +36,7 @@ func main() {
 	if err != nil {
 		logrus.Panic(err)
 	}
-	fmt.Println(prop.Raw())
+	fmt.Println(prop.Map())
 
 	hello, err := ty.ConfFile("hello.json")
 	if err != nil {
@@ -47,20 +47,25 @@ func main() {
 	var listener MyListener
 	prop.Register(&listener)
 
-	scanner := bufio.NewScanner(os.Stdin)
+	snr := bufio.NewScanner(os.Stdin)
 	var crc string
 
-	for {
-		fmt.Print("Enter put/his/ConfFile(default hello.properties): ")
-		// Scans a line from Stdin(Console)
-		scanner.Scan()
-
-		// Holds the string that scanned
-		cmd := scanner.Text()
-		if cmd == "" {
-			cmd = "hello.properties"
+	enter := "Enter get/put/his(hello.properties): "
+	for fmt.Print(enter); snr.Scan(); fmt.Print(enter) {
+		line := snr.Text()
+		if len(line) == 0 {
+			continue
 		}
 
+		fields := strings.Fields(line)
+		fmt.Printf("Fields: %q\n", fields)
+
+		//// Scans a line from Stdin(Console)
+		//scanner.Scan()
+
+		// Holds the string that scanned
+		//cmd := scanner.Text()
+		cmd := fields[0]
 		switch cmd {
 		case "put":
 			content := "name=" + gou.RandString(10) + "\nage=" + gou.RandomNum(3) + "\n"
@@ -78,13 +83,16 @@ func main() {
 
 			his := gou.PrettyJsontify(items)
 			fmt.Println("items:\n", his)
-		default:
-			hello, err := ty.ConfFile(cmd)
+		case "get":
+			hello, err := ty.ConfFile("hello.properties")
 			if err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Println(cmd, ":", hello.Raw())
 			}
+		default:
+			fmt.Println("unknown cmd" + cmd)
+			os.Exit(0)
 		}
 	}
 }
