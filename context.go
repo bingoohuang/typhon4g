@@ -88,6 +88,8 @@ func (c *TyphonContext) SaveFileContents(fcs []FileContent, triggerListeners boo
 				if subs != nil {
 					items = append(items, subs...)
 				}
+				old.Content = fc.Content
+				old.Crc = fc.Crc
 			}
 		} else {
 			fc.init()
