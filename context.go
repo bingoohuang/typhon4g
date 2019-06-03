@@ -48,11 +48,28 @@ type TyphonContext struct {
 
 // LoadConfFile loads the conf file by name confFile.
 func (c *TyphonContext) LoadConfFile(confFile string) ConfFile {
+	if fc := c.LoadConfCache(confFile); fc != nil {
+		return fc.Conf
+	}
+
+	return nil
+}
+
+// ClearCache clears the conf cache by name confFile.
+func (c *TyphonContext) ClearCache(confFile string) {
+	c.cacheLock.RLock()
+	defer c.cacheLock.RUnlock()
+
+	if _, ok := c.cache[confFile]; ok {
+		delete(c.cache, confFile)
+	}
+}
+func (c *TyphonContext) LoadConfCache(confFile string) *FileContent {
 	c.cacheLock.RLock()
 	defer c.cacheLock.RUnlock()
 
 	if fc, ok := c.cache[confFile]; ok {
-		return fc.Conf
+		return fc
 	}
 
 	return nil

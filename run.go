@@ -22,7 +22,8 @@ func (r Runner) Start() {
 	r.MetaService.ConfigServersAddrUpdater = func(addr string) { r.SnapshotService.SaveMeta(addr) }
 	r.MetaService.Try()
 
-	r.ConfigService.UpdateFn = func(updates []FileContent) { r.SnapshotService.SaveUpdates(updates) }
+	r.ConfigService.UpdateSnapshotsFn = func(updates []FileContent) { r.SnapshotService.SaveUpdates(updates) }
+	r.ConfigService.ClearSnapshotFn = func(confFile string) { _ = r.SnapshotService.Clear(confFile) }
 	r.ConfigService.Setting = *gou.GetDefaultSetting()
 	r.ConfigService.Setting.ConnectTimeout = MillisDuration(r.C.ConnectTimeoutMillis)
 	r.ConfigService.Setting.ReadWriteTimeout = MillisDuration(r.C.ConfigReadTimeoutMillis)

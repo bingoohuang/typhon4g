@@ -2,7 +2,9 @@ package typhon4g
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/bingoohuang/gou"
 	"github.com/sirupsen/logrus"
@@ -63,4 +65,14 @@ func (s SnapshotService) SaveUpdates(fcs []FileContent) {
 	for _, fc := range fcs {
 		s.Save(fc.ConfFile, fc.Content)
 	}
+}
+
+const DeletedAt = ".deletedAt."
+
+// SaveUpdates saves the updates to snapshot.
+func (s SnapshotService) Clear(confFile string) error {
+	from := filepath.Join(s.C.SnapshotsDir, confFile)
+	to := filepath.Join(s.C.SnapshotsDir, confFile+DeletedAt+gou.FormatDateLayout(time.Now(), "yyyyMMddHHmmss"))
+
+	return os.Rename(from, to)
 }

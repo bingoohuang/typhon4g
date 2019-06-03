@@ -11,9 +11,10 @@ import (
 
 // ConfigService defines the structure used for config refresh/write service
 type ConfigService struct {
-	C        *TyphonContext
-	Setting  gou.UrlHttpSettings
-	UpdateFn func([]FileContent)
+	C                 *TyphonContext
+	Setting           gou.UrlHttpSettings
+	UpdateSnapshotsFn func([]FileContent)
+	ClearSnapshotFn   func(string)
 }
 
 // Start starts the refreshing loop of config service.
@@ -72,7 +73,7 @@ func (c ConfigService) TryURL(url, confFile string, setting *gou.UrlHttpSettings
 		return false, nil
 	}
 
-	c.UpdateFn(rsp.Data)
+	c.UpdateSnapshotsFn(rsp.Data)
 	report := c.C.SaveFileContents(rsp.Data, true)
 	if report != nil && len(report.Items) != 0 {
 		c.UploadReport(report)
@@ -136,19 +137,38 @@ func (c ConfigService) PostConf(confFile, raw, clientIps string) (string, error)
 
 // TryPost try to post conf the server in specified url.
 func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, interface{}) {
+	ok := false
+	cached := c.C.LoadConfCache(confFile)
+
+	// update local first
+	{
+		fcs := []FileContent{{AppID: c.C.AppID, ConfFile: confFile, Content: raw, Crc: gou.Checksum([]byte(raw))}}
+		c.UpdateSnapshotsFn(fcs)
+		c.C.SaveFileContents(fcs, false)
+	}
+
+	defer func() {
+		if ok {
+			return
+		}
+
+		// recover
+		if cached != nil {
+			fcs := []FileContent{*cached}
+			c.UpdateSnapshotsFn(fcs)
+			c.C.SaveFileContents(fcs, false)
+		} else {
+			c.C.ClearCache(confFile)
+			c.ClearSnapshotFn(confFile)
+		}
+	}()
+
 	postURL := strings.Replace(url, "/client/config/", "/admin/release/", 1) +
 		"/" + confFile + "?clientIps=" + clientIps
 	var rsp PostRsp
-
 	_, _ = gou.RestPostFn(postURL, ReqBody{Data: raw}, &rsp, c.SetBasicAuth)
-	ok := rsp.Status == 200
+	ok = rsp.Status == 200
 
-	if ok {
-		fileContent := []FileContent{{AppID: c.C.AppID, ConfFile: confFile, Content: raw, Crc: rsp.Crc}}
-		fileContent[0].init()
-		c.UpdateFn(fileContent)
-		c.C.SaveFileContents(fileContent, false)
-	}
 	return ok, rsp.Crc
 }
 
