@@ -39,6 +39,17 @@ func NewPropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 	return pcf
 }
 
+// Map gets the map of conf file
+func (p *PropertiesConfFile) Map() map[string]string {
+	m := make(map[string]string)
+	p.Doc.Foreach(func(v string, k string) bool {
+		m[k] = v
+		return true
+	})
+
+	return m
+}
+
 // ConfFormat gets the format of conf file
 func (p *PropertiesConfFile) ConfFormat() ConfFmt {
 	return PropertiesFmt
