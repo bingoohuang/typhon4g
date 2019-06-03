@@ -2,13 +2,15 @@ module github.com/bingoohuang/typhon4g
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.3.3 // indirect
-	github.com/bingoohuang/gou v0.0.0-20190519004841-fdf834f3b415
+	github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218
+	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/mattn/go-isatty v0.0.8 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/pkg/errors v0.8.1
-	github.com/sirupsen/logrus v1.4.1
+	github.com/sirupsen/logrus v1.4.2
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e // indirect
 	github.com/tdewolff/parse v2.3.4+incompatible // indirect
 	github.com/thoas/go-funk v0.4.0
