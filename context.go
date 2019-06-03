@@ -49,7 +49,7 @@ type TyphonContext struct {
 // LoadConfFile loads the conf file by name confFile.
 func (c *TyphonContext) LoadConfFile(confFile string) ConfFile {
 	if fc := c.LoadConfCache(confFile); fc != nil {
-		return fc.Conf
+		return fc.conf
 	}
 
 	return nil
@@ -84,12 +84,13 @@ func (c *TyphonContext) SaveFileContents(fcs []FileContent, triggerListeners boo
 		fc := fc
 		if old, ok := c.cache[fc.ConfFile]; ok {
 			if old.Content != fc.Content {
-				subs := old.Conf.TriggerChange(old, &fc, time.Now(), triggerListeners)
+				subs := old.conf.TriggerChange(old, &fc, time.Now(), triggerListeners)
 				if subs != nil {
 					items = append(items, subs...)
 				}
 				old.Content = fc.Content
 				old.Crc = fc.Crc
+				// Here will not replace old.ConfFile to avoiding registered listeners lost
 			}
 		} else {
 			fc.init()

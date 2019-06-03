@@ -11,11 +11,11 @@ type FileContent struct {
 	Content  string `json:"content"`
 	Crc      string `json:"crc"`
 
-	Conf ConfFile `json:"-"`
+	conf ConfFile
 }
 
 func (f *FileContent) init() {
-	f.Conf = NewConfFile(f.ConfFile, f.Content)
+	f.conf = NewConfFile(f.ConfFile, f.Content)
 }
 
 // ConfFileChangeEvent structured the change event content.

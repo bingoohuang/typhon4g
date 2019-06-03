@@ -31,7 +31,7 @@ func (s SnapshotService) Load(file string) (ConfFile, error) {
 	}
 
 	s.C.RecoverFileContent(fc)
-	return fc.Conf, nil
+	return fc.conf, nil
 }
 
 // Save saves the confFile and its content to snapshot.
