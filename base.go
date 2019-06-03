@@ -66,7 +66,7 @@ func (b *BaseConf) UnregisterAll() {
 }
 
 // TriggerChange trigger the changes event
-func (b *BaseConf) TriggerChange(old, new FileContent,
+func (b *BaseConf) TriggerChange(old, new *FileContent,
 	changedTime time.Time, triggerListeners bool) []ClientReportItem {
 
 	oldRaw := b.Raw()

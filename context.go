@@ -81,16 +81,16 @@ func (c *TyphonContext) SaveFileContents(fcs []FileContent, triggerListeners boo
 
 	c.cacheLock.Lock()
 	for _, fc := range fcs {
+		fc := fc
 		if old, ok := c.cache[fc.ConfFile]; ok {
 			if old.Content != fc.Content {
-				subs := old.Conf.TriggerChange(*old, fc, time.Now(), triggerListeners)
+				subs := old.Conf.TriggerChange(old, &fc, time.Now(), triggerListeners)
 				if subs != nil {
 					items = append(items, subs...)
 				}
 			}
 		} else {
 			fc.init()
-			fc := fc
 			c.cache[fc.ConfFile] = &fc
 		}
 	}
