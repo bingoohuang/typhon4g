@@ -47,11 +47,13 @@ func main() {
 	var listener MyListener
 	prop.Register(&listener)
 
-	snr := bufio.NewScanner(os.Stdin)
 	var crc string
 
 	enter := "Enter get/put/his(hello.properties): "
-	for fmt.Print(enter); snr.Scan(); fmt.Print(enter) {
+	fmt.Print(enter)
+
+	snr := bufio.NewScanner(os.Stdin)
+	for ; snr.Scan(); fmt.Print(enter) {
 		line := snr.Text()
 		if len(line) == 0 {
 			continue
@@ -60,16 +62,14 @@ func main() {
 		fields := strings.Fields(line)
 		fmt.Printf("Fields: %q\n", fields)
 
-		//// Scans a line from Stdin(Console)
-		//scanner.Scan()
-
-		// Holds the string that scanned
-		//cmd := scanner.Text()
 		cmd := fields[0]
+	//for {
+	//	time.Sleep(10 * time.Second)
+	//	cmd := "put"
 		switch cmd {
 		case "put":
 			content := "name=" + gou.RandString(10) + "\nage=" + gou.RandomNum(3) + "\n"
-			fmt.Println("puting:", content)
+			fmt.Println("putting:", content)
 			crc, err = ty.PostConf("hello.properties", content, "all")
 			if err != nil {
 				logrus.Panicf("error %v", err)
