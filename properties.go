@@ -11,7 +11,7 @@ import (
 // PropertiesConfFile defines the properties format of conf file
 type PropertiesConfFile struct {
 	BaseConf
-	Doc *gou.PropertiesDoc
+	doc *gou.PropertiesDoc
 }
 
 var _ Prop = (*PropertiesConfFile)(nil)
@@ -26,13 +26,13 @@ func NewPropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 
 	pcf := &PropertiesConfFile{
 		BaseConf: BaseConf{raw: raw, confFile: confFile, listeners: make([]ConfFileChangeListener, 0)},
-		Doc:      doc}
+		doc:      doc}
 
 	pcf.updater = func(updated string) {
 		if doc, err := gou.LoadProperties(bytes.NewBufferString(updated)); err != nil {
 			logrus.Warnf("LoadProperties %v", err)
 		} else {
-			pcf.Doc = doc
+			pcf.doc = doc
 		}
 	}
 
@@ -42,7 +42,7 @@ func NewPropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 // Map gets the map of conf file
 func (p *PropertiesConfFile) Map() map[string]string {
 	m := make(map[string]string)
-	p.Doc.Foreach(func(v string, k string) bool {
+	p.doc.Foreach(func(v, k string) bool {
 		m[k] = v
 		return true
 	})
@@ -57,18 +57,18 @@ func (p *PropertiesConfFile) ConfFormat() ConfFmt {
 
 // Str get the string value of key specified by name.
 func (p *PropertiesConfFile) Str(name string) string {
-	value, _ := p.Doc.Get(name)
-	return value
+	v, _ := p.doc.Get(name)
+	return v
 }
 
 // StrOr get the string value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) StrOr(name, defaultValue string) string {
-	value := p.Str(name)
-	if value == "" {
+	v := p.Str(name)
+	if v == "" {
 		return defaultValue
 	}
 
-	return value
+	return v
 }
 
 // Bool get the bool value of key specified by name.
