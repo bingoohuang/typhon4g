@@ -65,9 +65,11 @@ func (c *TyphonContext) SaveFileContents(fcs []FileContent) *ClientReport {
 	c.cacheLock.Lock()
 	for _, fc := range fcs {
 		if old, ok := c.cache[fc.ConfFile]; ok {
-			subs := old.Conf.TriggerChange(*old, fc, time.Now())
-			if subs != nil {
-				items = append(items, subs...)
+			if old.Content != fc.Content {
+				subs := old.Conf.TriggerChange(*old, fc, time.Now())
+				if subs != nil {
+					items = append(items, subs...)
+				}
 			}
 		} else {
 			fc.init()

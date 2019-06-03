@@ -141,7 +141,15 @@ func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, inte
 	var rsp PostRsp
 
 	_, _ = gou.RestPostFn(postURL, ReqBody{Data: raw}, &rsp, c.SetBasicAuth)
-	return rsp.Status == 200, rsp.Crc
+	ok := rsp.Status == 200
+
+	if ok {
+		fileContent := []FileContent{{AppID: c.C.AppID, ConfFile: confFile, Content: raw, Crc: rsp.Crc}}
+		fileContent[0].init()
+		c.UpdateFn(fileContent)
+		c.C.SaveFileContents(fileContent)
+	}
+	return ok, rsp.Crc
 }
 
 // ListenerResults gets the listener results from the server.

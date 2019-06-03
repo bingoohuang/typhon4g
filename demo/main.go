@@ -27,7 +27,7 @@ var _ typhon4g.ConfFileChangeListener = (*MyListener)(nil)
 func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok bool) {
 	fmt.Println("OnChange", event)
 	// eat your own dog food here
-	return "your message", true /*  true to means changed OK */
+	return "my message:" + gou.RandString(10), true /*  true to means changed OK */
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 	if err != nil {
 		logrus.Panic(err)
 	}
-	fmt.Println(prop.Map())
+	fmt.Println(prop.Raw())
 
 	hello, err := ty.ConfFile("hello.json")
 	if err != nil {
@@ -51,7 +51,7 @@ func main() {
 	var crc string
 
 	for {
-		fmt.Print("Enter exit/put/his/ConfFile(default hello.properties): ")
+		fmt.Print("Enter put/his/ConfFile(default hello.properties): ")
 		// Scans a line from Stdin(Console)
 		scanner.Scan()
 
@@ -62,12 +62,10 @@ func main() {
 		}
 
 		switch cmd {
-		case "exit":
-			os.Exit(0)
 		case "put":
-			crc, err = ty.PostConf("hello.properties",
-				"name="+gou.RandString(10)+"\nage="+gou.RandomNum(3)+"\n",
-				"all")
+			content := "name=" + gou.RandString(10) + "\nage=" + gou.RandomNum(3) + "\n"
+			fmt.Println("puting:", content)
+			crc, err = ty.PostConf("hello.properties", content, "all")
 			if err != nil {
 				logrus.Panicf("error %v", err)
 			}
@@ -78,14 +76,15 @@ func main() {
 				logrus.Panicf("error %v", err)
 			}
 
-			fmt.Println("items", items)
+			his := gou.PrettyJsontify(items)
+			fmt.Println("items:\n", his)
 		default:
 			hello, err := ty.ConfFile(cmd)
 			if err != nil {
-				logrus.Panic(err)
+				fmt.Println(err)
+			} else {
+				fmt.Println(cmd, ":", hello.Raw())
 			}
-
-			fmt.Println(cmd, ":", hello.Raw())
 		}
 	}
 }
