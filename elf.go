@@ -1,6 +1,8 @@
 package typhon4g
 
 import (
+	"bytes"
+	"github.com/bingoohuang/gou"
 	"os"
 	"time"
 
@@ -33,4 +35,60 @@ func Required(sth, name string) string {
 
 	logrus.Panic(name, " required")
 	return ""
+}
+
+type ChangeType int
+
+const (
+	ChangeTypeModify ChangeType = iota
+	ChangeTypeNew
+	ChangeTypeDeleted
+)
+
+//go:generate enumer -type=ChangeType -json
+
+// DiffPropertiesChangeEvent defines ChangeEvent for properties diff
+type DiffPropertiesChangeEvent struct {
+	ChangeType ChangeType
+	Key        string
+	LeftValue  string
+	RightValue string
+}
+
+func DiffProperties(l, r string, f func(DiffPropertiesChangeEvent)) error {
+	ldoc, err := gou.LoadProperties(bytes.NewBufferString(l))
+	if err != nil {
+		return err
+	}
+
+	rdoc, err := gou.LoadProperties(bytes.NewBufferString(r))
+	if err != nil {
+		return err
+	}
+
+	lm := make(map[string]string)
+	rm := make(map[string]string)
+	ldoc.Foreach(func(v, k string) bool { lm[k] = v; return true })
+	rdoc.Foreach(func(v, k string) bool { rm[k] = v; return true })
+
+	lKeys := gou.MapKeysSorted(lm).([]string)
+	for _, lk := range lKeys {
+		lv := lm[lk]
+		rv, ok := rm[lk]
+		if ok {
+			if lv != rv {
+				f(DiffPropertiesChangeEvent{ChangeType: ChangeTypeModify, Key: lk, LeftValue: lv, RightValue: rv})
+			}
+			delete(rm, lk)
+		} else {
+			f(DiffPropertiesChangeEvent{ChangeType: ChangeTypeDeleted, Key: lk, LeftValue: lv, RightValue: ""})
+		}
+	}
+
+	rKeys := gou.MapKeysSorted(rm).([]string)
+	for _, rk := range rKeys {
+		f(DiffPropertiesChangeEvent{ChangeType: ChangeTypeNew, Key: rk, LeftValue: "", RightValue: rm[rk]})
+	}
+
+	return nil
 }

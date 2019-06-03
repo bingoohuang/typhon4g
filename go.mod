@@ -12,6 +12,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e // indirect
+	github.com/stretchr/testify v1.3.0
 	github.com/tdewolff/parse v2.3.4+incompatible // indirect
 	github.com/thoas/go-funk v0.4.0
 	golang.org/x/net v0.0.0-20190522155817-f3200d17e092 // indirect
