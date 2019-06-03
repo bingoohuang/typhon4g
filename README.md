@@ -1,5 +1,5 @@
 # typhon4g
-typhon client for golang
+typhon client for golang [![Go Report Card](https://goreportcard.com/badge/github.com/bingoohuang/typhon4g)](https://goreportcard.com/report/github.com/bingoohuang/typhon4g)
 
 # Usage
 
@@ -41,7 +41,14 @@ typhon client for golang
 1. Use the api to access config
 
     ```go
-	prop, err := typhon4g.Properties("hello.properties")
+    var typhon *typhon4g.Runner
+   	var err error
+   	if typhon, err = typhon4g.LoadStart(); err != nil {
+   		logrus.Panic(err)
+   	}
+   
+   
+	prop, err := typhon.Properties("hello.properties")
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -50,7 +57,7 @@ typhon client for golang
 	fmt.Println("age:", prop.Int("age"))
 	fmt.Println("adult", prop.Bool("adult"))
  
- 	hello, _ := typhon4g.GetConfFile("hello.json")
+ 	hello, _ := typhon.ConfFile("hello.json")
  	fmt.Println("hello.json:", hello.Raw())
     ```
     
@@ -71,21 +78,21 @@ typhon client for golang
  
     // In your code, register the listener instance
     var listener MyListener
-    prop.Register(&listener)
+    typhon.Register(&listener)
  
     ```
 
 1. Post Conf to the server
     
     ```go
-    crc, err := typhon4g.PostConf("post.json", `{"name":"bingoo","age":123}`, "all")
+    crc, err := typhon.PostConf("post.json", `{"name":"bingoo","age":123}`, "all")
     fmt.Println("crc:", crc)
     ```
 
 1. Query the reported log by 
 
     ```go
-	items, err := typhon4g.ListenerResults("hello.properties", crc)
+	items, err := typhon.ListenerResults("hello.properties", crc)
 	if err != nil {
 		logrus.Panicf("error %v", err)
 	}
