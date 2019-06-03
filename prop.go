@@ -4,7 +4,7 @@ package typhon4g
 type Prop interface {
 	// Str get the string value of key specified by name.
 	Str(name string) string
-	// Str get the string value of key specified by name or defaultValue when value is empty or missed.
+	// StrOr get the string value of key specified by name or defaultValue when value is empty or missed.
 	StrOr(name, defaultValue string) string
 
 	// Bool get the bool value of key specified by name.

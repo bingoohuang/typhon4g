@@ -50,7 +50,7 @@ func (p *PropertiesConfFile) Str(name string) string {
 	return value
 }
 
-// Str get the string value of key specified by name or defaultValue when value is empty or missed.
+// StrOr get the string value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) StrOr(name, defaultValue string) string {
 	value := p.Str(name)
 	if value == "" {

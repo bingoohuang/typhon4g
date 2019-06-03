@@ -1,5 +1,6 @@
 package typhon4g
 
+// TxtConfFile defines the txt format of conf file
 type TxtConfFile struct {
 	BaseConf
 }
