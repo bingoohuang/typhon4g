@@ -1,9 +1,10 @@
 package typhon4g
 
 import (
-	"github.com/sirupsen/logrus"
 	"os"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func SecondsDuration(i int64) time.Duration {

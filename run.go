@@ -2,9 +2,11 @@ package typhon4g
 
 import (
 	"fmt"
+
 	"github.com/bingoohuang/gou"
 )
 
+// Runner defines the typhon-client typhon service.
 type Runner struct {
 	C               *TyphonContext
 	SnapshotService *SnapshotService
@@ -13,6 +15,7 @@ type Runner struct {
 	PollingService  *PollingService
 }
 
+// Start start the typhon.
 func (r Runner) Start() {
 	r.initConfigServerUrls()
 
@@ -34,15 +37,21 @@ func (r Runner) Start() {
 
 func (r Runner) initConfigServerUrls() {
 	if cfs := r.SnapshotService.LoadMeta(); cfs != "" {
-		r.C.ConfigServerUrls = r.C.CreateConfigServerUrls(cfs)
+		r.C.ConfigServers = r.C.createConfigServers(cfs)
 	}
 }
 
+// Properties gets the properties conf file.
 func (r Runner) Properties(confFile string) (*PropertiesConfFile, error) {
 	c, e := r.ConfFile(confFile)
+	if c == nil {
+		return nil, e
+	}
+
 	return c.(*PropertiesConfFile), e
 }
 
+// ConfFile gets the conf file.
 func (r Runner) ConfFile(confFile string) (ConfFile, error) {
 	cf := r.C.LoadConfFile(confFile)
 	if cf != nil {
@@ -61,10 +70,12 @@ func (r Runner) ConfFile(confFile string) (ConfFile, error) {
 	return nil, fmt.Errorf("failed to Load conf file %s", confFile)
 }
 
+// PostConf posts the conf to the server and returns crc and error.
 func (r Runner) PostConf(confFile, raw, clientIps string) (string, error) {
 	return r.ConfigService.PostConf(confFile, raw, clientIps)
 }
 
+// ListenerResults get the listener  results
 func (r Runner) ListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
 	return r.ConfigService.ListenerResults(confFile, crc)
 }

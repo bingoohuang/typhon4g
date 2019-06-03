@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// FileContent structured the config file content detail.
 type FileContent struct {
 	AppID    string `json:"appID"`
 	ConfFile string `json:"confFile"`
@@ -17,13 +18,17 @@ func (f *FileContent) init() {
 	f.Conf = NewConfFile(f.ConfFile, f.Content)
 }
 
+// ConfFmt defines the conf file format.
 type ConfFmt int
 
 const (
+	// PropertiesFmt means the conf file is in *.properties format.
 	PropertiesFmt ConfFmt = iota
+	// TxtFmt means the conf file is in *.txt format.
 	TxtFmt
 )
 
+// ConfFileChangeEvent structured the change event content.
 type ConfFileChangeEvent struct {
 	ConfFile       string    `json:"confFile"`
 	ConfFileFormat ConfFmt   `json:"confFileFormat"`
@@ -32,6 +37,7 @@ type ConfFileChangeEvent struct {
 	ChangedTime    time.Time `json:"changedTime"` // 变更发生的时间(毫秒）
 }
 
+// ClientReportItem defines the structure of client listener report item.
 type ClientReportItem struct {
 	Time     string `json:"time"`
 	Msg      string `json:"msg"`
@@ -40,22 +46,23 @@ type ClientReportItem struct {
 	Crc      string `json:"crc"`
 }
 
+// ClientReportRspItem defines the structure of response to client report querying.
 type ClientReportRspItem struct {
-	Id       string `json:"id"`
-	AppID    string `json:"appID"`
-	Host     string `json:"host"`
-	Pid      string `json:"pid"`
-	Bin      string `json:"bin"`
-	ConfFile string `json:"confFile"`
-	Crc      string `json:"crc"`
+	ID    string `json:"id"`
+	AppID string `json:"appID"`
+	Host  string `json:"host"`
+	Pid   string `json:"pid"`
+	Bin   string `json:"bin"`
 	ClientReportItem
 }
 
+// ClientReportRsp defines the top response structure of client report querying.
 type ClientReportRsp struct {
-	RspBase
+	RspHead
 	Data []ClientReportRspItem `json:"data"`
 }
 
+// ClientReport defines the structure of client report uploading.
 type ClientReport struct {
 	Host string `json:"host"`
 	Pid  string `json:"pid"`
@@ -64,16 +71,19 @@ type ClientReport struct {
 	Items []ClientReportItem `json:"items"`
 }
 
-type RspBase struct {
+// RspHead defines the head of response.
+type RspHead struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
+// ReqBody defines the request body.
 type ReqBody struct {
-	Data string `json:"data"`
+	Data interface{} `json:"data"`
 }
 
-type Rsp struct {
-	RspBase
+// PostRsp defines the response the post api.
+type PostRsp struct {
+	RspHead
 	Crc string `json:"crc"`
 }

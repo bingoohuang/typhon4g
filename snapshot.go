@@ -1,10 +1,11 @@
 package typhon4g
 
 import (
-	"github.com/bingoohuang/gou"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"path/filepath"
+
+	"github.com/bingoohuang/gou"
+	"github.com/sirupsen/logrus"
 )
 
 type SnapshotService struct {

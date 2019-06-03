@@ -4,7 +4,8 @@ type TxtConfFile struct {
 	BaseConf
 }
 
-func (t TxtConfFile) ConfFormat() ConfFmt {
+// ConfFormat gets the format of conf file
+func (t *TxtConfFile) ConfFormat() ConfFmt {
 	return TxtFmt
 }
 

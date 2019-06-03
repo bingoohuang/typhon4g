@@ -3,62 +3,76 @@ package typhon4g
 import (
 	"bytes"
 	"fmt"
-	"github.com/bingoohuang/gou"
-	"github.com/mitchellh/go-homedir"
-	"github.com/thoas/go-funk"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
+
+	"github.com/bingoohuang/gou"
+	"github.com/mitchellh/go-homedir"
+	"github.com/thoas/go-funk"
 )
 
+// TyphonContext defines the context of typhon client.
 type TyphonContext struct {
+	// AppID defines the global appID of the typhon client.
 	AppID string `json:"appID"`
 
-	MetaServerUrls   []string `json:"metaServerUrls"`
-	ConfigServerUrls []string `json:"configServerAddr"`
+	// MetaServers defines the meta servers.
+	MetaServers []string `json:"metaServers"`
+	// ConfigServers defines the config servers.
+	ConfigServers []string `json:"configServers"`
 
-	ConnectTimeoutMillis         int64 `json:"connectTimeoutMillis"`
-	PollingReadTimeoutMillis     int64 `json:"pollingReadTimeoutMillis"`
-	RetryNetworkSleepSeconds     int64 `json:"retryNetworkSleepSeconds"`
+	// ConnectTimeoutMillis defines the http connect timeout in millis.
+	ConnectTimeoutMillis int64 `json:"connectTimeoutMillis"`
+	// PollingReadTimeoutMillis defines the read timeout in millis of config polling
+	PollingReadTimeoutMillis int64 `json:"pollingReadTimeoutMillis"`
+	// RetryNetworkSleepSeconds defines the sleeping time in seconds before retry.
+	RetryNetworkSleepSeconds int64 `json:"retryNetworkSleepSeconds"`
+	// ConfigRefreshIntervalSeconds defines the refresh loop interval of config service.
 	ConfigRefreshIntervalSeconds int64 `json:"configRefreshIntervalSeconds"`
-	ConfigReadTimeoutMillis      int64 `json:"configReadTimeoutMillis"`
-	MetaRefreshIntervalSeconds   int64 `json:"metaRefreshIntervalSeconds"`
-
+	// ConfigReadTimeoutMillis defines the read timeout in millis of config service.
+	ConfigReadTimeoutMillis int64 `json:"configReadTimeoutMillis"`
+	// MetaRefreshIntervalSeconds defines the refresh loop interval of meta service.
+	MetaRefreshIntervalSeconds int64 `json:"metaRefreshIntervalSeconds"`
+	// SnapshotsDir defines the snapshot directory of config.
 	SnapshotsDir string `json:"snapshotsDir"`
 
-	Cache     map[string]*FileContent `json:"Cache"` // file->content
-	cacheLock sync.RWMutex            `json:"-"`
+	cache     map[string]*FileContent // file->content
+	cacheLock sync.RWMutex
 
-	PostAuth string `json:"postAuth"`
+	postAuth string
 }
 
-func (c TyphonContext) LoadConfFile(confFile string) ConfFile {
+// LoadConfFile loads the conf file by name confFile.
+func (c *TyphonContext) LoadConfFile(confFile string) ConfFile {
 	c.cacheLock.RLock()
 	defer c.cacheLock.RUnlock()
 
-	if fc, ok := c.Cache[confFile]; ok {
+	if fc, ok := c.cache[confFile]; ok {
 		return fc.Conf
 	}
 
 	return nil
 }
 
-func (c TyphonContext) SaveFileContents(fcs []FileContent) *ClientReport {
+// SaveFileContents saves the file contents to cache and snapshot.
+func (c *TyphonContext) SaveFileContents(fcs []FileContent) *ClientReport {
 	items := make([]ClientReportItem, 0)
 
 	c.cacheLock.Lock()
 	for _, fc := range fcs {
-		if old, ok := c.Cache[fc.ConfFile]; ok {
-			subs := old.Conf.TriggerChange(old, &fc, time.Now())
+		if old, ok := c.cache[fc.ConfFile]; ok {
+			subs := old.Conf.TriggerChange(*old, fc, time.Now())
 			if subs != nil {
 				items = append(items, subs...)
 			}
 		} else {
 			fc.init()
-			c.Cache[fc.ConfFile] = &fc
+			fc := fc
+			c.cache[fc.ConfFile] = &fc
 		}
 	}
 	c.cacheLock.Unlock()
@@ -72,23 +86,26 @@ func (c TyphonContext) SaveFileContents(fcs []FileContent) *ClientReport {
 	}
 }
 
-func (c TyphonContext) RecoverFileContent(fc *FileContent) {
+// RecoverFileContent recover the conf file from snapshot.
+func (c *TyphonContext) RecoverFileContent(fc *FileContent) {
 	c.cacheLock.Lock()
 	defer c.cacheLock.Unlock()
 
 	fc.init()
-	c.Cache[fc.ConfFile] = fc
+	c.cache[fc.ConfFile] = fc
 }
 
-func (c TyphonContext) WalkFileContents(fn func(confFile string, fileContext *FileContent)) {
+// WalkFileContents walks the cache.
+func (c *TyphonContext) WalkFileContents(fn func(confFile string, fileContext *FileContent)) {
 	c.cacheLock.RLock()
 	defer c.cacheLock.RUnlock()
 
-	for k, v := range c.Cache {
+	for k, v := range c.cache {
 		fn(k, v)
 	}
 }
 
+// LoadContextFile load the typhon context by file contextFile
 func LoadContextFile(contextFile string) (*TyphonContext, error) {
 	if _, err := os.Stat(contextFile); err != nil {
 		return nil, err
@@ -102,6 +119,7 @@ func LoadContextFile(contextFile string) (*TyphonContext, error) {
 	return LoadContext(bytes.NewBuffer(f))
 }
 
+// LoadContext loads the typhon context by reader.
 func LoadContext(reader io.Reader) (*TyphonContext, error) {
 	d, err := gou.LoadProperties(reader)
 	if nil != err {
@@ -112,32 +130,29 @@ func LoadContext(reader io.Reader) (*TyphonContext, error) {
 	snapshotsDir, _ := homedir.Expand(sd)
 
 	c := &TyphonContext{
-
-		AppID:    MustExists(d.String("appID"), "appID"),
-		PostAuth: d.String("postAuth"),
-
+		AppID:                        MustExists(d.String("appID"), "appID"),
+		postAuth:                     d.String("postAuth"),
 		ConnectTimeoutMillis:         d.IntDefault("connectTimeoutMillis", 1000),
 		ConfigReadTimeoutMillis:      d.IntDefault("configReadTimeoutMillis", 5000),
 		PollingReadTimeoutMillis:     d.IntDefault("pollingReadTimeoutMillis", 70000),
 		RetryNetworkSleepSeconds:     d.IntDefault("retryNetworkSleepSeconds", 60),
 		ConfigRefreshIntervalSeconds: d.IntDefault("configRefreshIntervalSeconds", 300),
 		MetaRefreshIntervalSeconds:   d.IntDefault("metaRefreshIntervalSeconds", 300),
-
-		Cache: make(map[string]*FileContent),
 	}
 
+	c.cache = make(map[string]*FileContent)
 	c.SnapshotsDir = MustMakeDirAll(filepath.Join(snapshotsDir, c.AppID))
-	c.MetaServerUrls = c.CreateMetaServerUrls(d.StringDefault("metaServers", "http://127.0.0.1:11683"))
+	c.MetaServers = c.createMetaServers(d.StringDefault("metaServers", "http://127.0.0.1:11683"))
 
 	return c, nil
 }
 
-func (c TyphonContext) CreateMetaServerUrls(metaServers string) []string {
+func (c *TyphonContext) createMetaServers(metaServers string) []string {
 	return funk.Map(gou.SplitN(metaServers, ",", true, true),
 		func(meta string) string { return meta + "/meta" }).([]string)
 }
 
-func (c TyphonContext) CreateConfigServerUrls(configServers string) []string {
+func (c *TyphonContext) createConfigServers(configServers string) []string {
 	return funk.Map(gou.SplitN(configServers, ",", true, true),
 		func(url string) string { return url + "/client/config/" + c.AppID }).([]string)
 }

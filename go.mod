@@ -1,4 +1,4 @@
-module typhon4g
+module github.com/bingoohuang/typhon4g
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.3.3 // indirect
@@ -12,7 +12,8 @@ require (
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e // indirect
 	github.com/tdewolff/parse v2.3.4+incompatible // indirect
 	github.com/thoas/go-funk v0.4.0
-	golang.org/x/sys v0.0.0-20190429190828-d89cdac9e872 // indirect
+	golang.org/x/net v0.0.0-20190522155817-f3200d17e092 // indirect
+	golang.org/x/sys v0.0.0-20190602015325-4c4f7f33c9ed // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
 

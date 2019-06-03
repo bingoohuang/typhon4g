@@ -1,9 +1,10 @@
 package typhon4g
 
 import (
+	"time"
+
 	"github.com/bingoohuang/gou"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 type MetaService struct {
@@ -16,27 +17,24 @@ func (m MetaService) Start() {
 	timer := time.NewTimer(d)
 	defer timer.Stop()
 
-	for {
-		select {
-		case <-timer.C:
-			m.Try()
-			timer.Reset(d)
-		}
+	for range timer.C {
+		m.Try()
+		timer.Reset(d)
 	}
 }
 
 func (m MetaService) Try() {
 	var configServerUrls []string
-	gou.RandomIterateSlice(m.C.MetaServerUrls, func(url string) bool {
+	gou.RandomIterateSlice(m.C.MetaServers, func(url string) bool {
 		var err error
-		configServerUrls, err = m.TryUrl(url)
+		configServerUrls, err = m.TryURL(url)
 		if err != nil {
-			logrus.Warnf("fail to TryUrl %v", err)
+			logrus.Warnf("fail to TryURL %v", err)
 			return false
 		}
 
 		if len(configServerUrls) == 0 {
-			logrus.Warnf("fail to TryUrl empty")
+			logrus.Warnf("fail to TryURL empty")
 			return false
 		}
 
@@ -44,7 +42,7 @@ func (m MetaService) Try() {
 	})
 
 	if len(configServerUrls) > 0 {
-		m.C.ConfigServerUrls = configServerUrls
+		m.C.ConfigServers = configServerUrls
 	}
 }
 
@@ -54,12 +52,12 @@ type MetaRsp struct {
 	Data    string `json:"data"`
 }
 
-func (m MetaService) TryUrl(url string) ([]string, error) {
+func (m MetaService) TryURL(url string) ([]string, error) {
 	var rsp MetaRsp
 	if err := gou.RestGet(url, &rsp); err != nil {
 		return nil, err
 	}
 
 	m.ConfigServersAddrUpdater(rsp.Data)
-	return m.C.CreateConfigServerUrls(rsp.Data), nil
+	return m.C.createConfigServers(rsp.Data), nil
 }

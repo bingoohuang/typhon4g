@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// BaseConf defines the base structure of conf file
 type BaseConf struct {
 	raw       string
 	confFile  string
@@ -14,18 +15,18 @@ type BaseConf struct {
 	updater func(updated string)
 }
 
-func (b BaseConf) Raw() string {
-	lock := b.rawLock
-	lock.RLock()
-	defer lock.RUnlock()
+// Raw gets the raw content of conf file
+func (b *BaseConf) Raw() string {
+	b.rawLock.RLock()
+	defer b.rawLock.RUnlock()
 
 	return b.raw
 }
 
+// UpdateRaw update the raw content of conf file
 func (b *BaseConf) UpdateRaw(updated string) {
-	lock := b.rawLock
-	lock.Lock()
-	defer lock.Unlock()
+	b.rawLock.Lock()
+	defer b.rawLock.Unlock()
 
 	b.raw = updated
 	if b.updater != nil {
@@ -33,14 +34,17 @@ func (b *BaseConf) UpdateRaw(updated string) {
 	}
 }
 
-func (b BaseConf) Name() string {
+// Name gets the name of conf file
+func (b *BaseConf) Name() string {
 	return b.confFile
 }
 
+// Register registers the change listener of conf file
 func (b *BaseConf) Register(listener ConfFileChangeListener) {
 	b.listeners = append(b.listeners, listener)
 }
 
+// Unregister removes the register of the change listener of conf file
 func (b *BaseConf) Unregister(listener ConfFileChangeListener) int {
 	ls := make([]ConfFileChangeListener, 0, len(b.listeners))
 	count := 0
@@ -56,14 +60,15 @@ func (b *BaseConf) Unregister(listener ConfFileChangeListener) int {
 	return count
 }
 
+// UnregisterAll  removes all registers of the change listener of conf file
 func (b *BaseConf) UnregisterAll() {
 	b.listeners = b.listeners[0:0]
 }
 
-func (b *BaseConf) TriggerChange(old, new *FileContent, changedTime time.Time) []ClientReportItem {
-	v := b.Raw()
+// TriggerChange trigger the changes event
+func (b *BaseConf) TriggerChange(old, new FileContent, changedTime time.Time) []ClientReportItem {
+	oldRaw := b.Raw()
 	b.UpdateRaw(new.Content)
-
 	items := make([]ClientReportItem, 0)
 
 	if len(b.listeners) == 0 {
@@ -76,7 +81,7 @@ func (b *BaseConf) TriggerChange(old, new *FileContent, changedTime time.Time) [
 		msg, ok := l.OnChange(ConfFileChangeEvent{
 			ConfFile:       b.confFile,
 			ConfFileFormat: PropertiesFmt,
-			Old:            v,
+			Old:            oldRaw,
 			Current:        new.Content,
 			ChangedTime:    time.Now(),
 		})

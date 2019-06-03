@@ -6,22 +6,32 @@ import (
 	"time"
 )
 
+// ConfFileChangeListener defines the interface for change listener
 type ConfFileChangeListener interface {
 	OnChange(event ConfFileChangeEvent) (string, bool)
 }
 
+// ConfFile
 type ConfFile interface {
+	// Raw gets the raw content of conf file
 	Raw() string
+	// ConfFormat gets the format of conf file
 	ConfFormat() ConfFmt
+	// Name gets the name of conf file
 	Name() string
 
+	// Register registers the change listener of conf file
 	Register(ConfFileChangeListener)
+	// Unregister removes the register of the change listener of conf file
 	Unregister(ConfFileChangeListener) int
+	// UnregisterAll  removes all registers of the change listener of conf file
 	UnregisterAll()
 
-	TriggerChange(old, new *FileContent, changedTime time.Time) []ClientReportItem
+	// TriggerChange trigger the changes event
+	TriggerChange(old, new FileContent, changedTime time.Time) []ClientReportItem
 }
 
+// NewConfFile creates a ConfFile interface by confFile and raw content.
 func NewConfFile(confFile, raw string) ConfFile {
 	ext := strings.ToLower(filepath.Ext(confFile))
 	switch ext {

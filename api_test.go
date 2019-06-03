@@ -2,12 +2,22 @@ package typhon4g_test
 
 import (
 	"fmt"
-	"github.com/bingoohuang/gou"
-	"github.com/sirupsen/logrus"
 	"testing"
 	"time"
-	"typhon4g"
+
+	"github.com/bingoohuang/gou"
+	"github.com/bingoohuang/typhon4g"
+	"github.com/sirupsen/logrus"
 )
+
+var typhon *typhon4g.Runner
+
+func init() {
+	var err error
+	if typhon, err = typhon4g.LoadStart(); err != nil {
+		logrus.Panic(err)
+	}
+}
 
 type MyListener struct{}
 
@@ -21,7 +31,7 @@ func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok
 }
 
 func TestGetConf(t *testing.T) {
-	prop, err := typhon4g.Properties("hello.properties")
+	prop, err := typhon.Properties("hello.properties")
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -30,7 +40,7 @@ func TestGetConf(t *testing.T) {
 	fmt.Println("age:", prop.Int("age"))
 	fmt.Println("adult", prop.Bool("adult"))
 
-	hello, err := typhon4g.GetConfFile("hello.json")
+	hello, err := typhon.ConfFile("hello.json")
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -39,7 +49,7 @@ func TestGetConf(t *testing.T) {
 	var listener MyListener
 	prop.Register(&listener)
 
-	crc, err := typhon4g.PostConf("hello.properties", "name=bingoo\nage="+gou.RandomNum(3)+"\n", "all")
+	crc, err := typhon.PostConf("hello.properties", "name=bingoo\nage="+gou.RandomNum(3)+"\n", "all")
 	if err != nil {
 		logrus.Panicf("error %v", err)
 	}
@@ -53,7 +63,7 @@ func TestGetConf(t *testing.T) {
 		fmt.Println("hello.json:", hello.Raw())
 	}
 
-	items, err := typhon4g.ListenerResults("hello.properties", crc)
+	items, err := typhon.ListenerResults("hello.properties", crc)
 	if err != nil {
 		logrus.Panicf("error %v", err)
 	}
