@@ -73,7 +73,7 @@ func (c ConfigService) TryURL(url, confFile string, setting *gou.UrlHttpSettings
 	}
 
 	c.UpdateFn(rsp.Data)
-	report := c.C.SaveFileContents(rsp.Data)
+	report := c.C.SaveFileContents(rsp.Data, true)
 	if report != nil && len(report.Items) != 0 {
 		c.UploadReport(report)
 	}
@@ -147,7 +147,7 @@ func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, inte
 		fileContent := []FileContent{{AppID: c.C.AppID, ConfFile: confFile, Content: raw, Crc: rsp.Crc}}
 		fileContent[0].init()
 		c.UpdateFn(fileContent)
-		c.C.SaveFileContents(fileContent)
+		c.C.SaveFileContents(fileContent, false)
 	}
 	return ok, rsp.Crc
 }

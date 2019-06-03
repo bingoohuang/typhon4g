@@ -59,13 +59,13 @@ func (c *TyphonContext) LoadConfFile(confFile string) ConfFile {
 }
 
 // SaveFileContents saves the file contents to cache and snapshot.
-func (c *TyphonContext) SaveFileContents(fcs []FileContent) *ClientReport {
+func (c *TyphonContext) SaveFileContents(fcs []FileContent, triggerChange bool) *ClientReport {
 	items := make([]ClientReportItem, 0)
 
 	c.cacheLock.Lock()
 	for _, fc := range fcs {
 		if old, ok := c.cache[fc.ConfFile]; ok {
-			if old.Content != fc.Content {
+			if old.Content != fc.Content && triggerChange {
 				subs := old.Conf.TriggerChange(*old, fc, time.Now())
 				if subs != nil {
 					items = append(items, subs...)
