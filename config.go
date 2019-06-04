@@ -124,20 +124,7 @@ func (c ConfigService) TryUploadReport(url string, report *ClientReport) bool {
 
 // PostConf posts the conf to the server, returns crc and error info.
 func (c ConfigService) PostConf(confFile, raw, clientIps string) (string, error) {
-	ok, res := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
-		return c.TryPost(url, confFile, raw, clientIps)
-	})
-
-	if ok && res != nil {
-		return res.(string), nil
-	}
-
-	return "", errors.New("failed to post")
-}
-
-// TryPost try to post conf the server in specified url.
-func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, interface{}) {
-	ok := false
+	succ := false
 	cached := c.C.LoadConfCache(confFile)
 
 	// update local first
@@ -148,7 +135,7 @@ func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, inte
 	}
 
 	defer func() {
-		if ok {
+		if succ {
 			return
 		}
 
@@ -163,13 +150,26 @@ func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, inte
 		}
 	}()
 
+	ok, res := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
+		return c.TryPost(url, confFile, raw, clientIps)
+	})
+
+	if ok && res != nil {
+		succ = true
+		return res.(string), nil
+	}
+
+	return "", errors.New("failed to post")
+}
+
+// TryPost try to post conf the server in specified url.
+func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, interface{}) {
 	postURL := strings.Replace(url, "/client/config/", "/admin/release/", 1) +
 		"/" + confFile + "?clientIps=" + clientIps
 	var rsp PostRsp
 	_, _ = gou.RestPostFn(postURL, ReqBody{Data: raw}, &rsp, c.SetBasicAuth)
-	ok = rsp.Status == 200
 
-	return ok, rsp.Crc
+	return rsp.Status == 200, rsp.Crc
 }
 
 // ListenerResults gets the listener results from the server.

@@ -2,9 +2,10 @@ package typhon4g
 
 import (
 	"bytes"
-	"github.com/bingoohuang/gou"
 	"os"
 	"time"
+
+	"github.com/bingoohuang/gou"
 
 	"github.com/sirupsen/logrus"
 )

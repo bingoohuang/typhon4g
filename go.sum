@@ -10,6 +10,8 @@ github.com/averagesecurityguy/random v0.0.0-20180326012618-37cce341d2af h1:P1psV
 github.com/averagesecurityguy/random v0.0.0-20180326012618-37cce341d2af/go.mod h1:xlqW8P0gOqVMB8Kp0mMuUznEi1PzjF+mhHTSC+ymalU=
 github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218 h1:lTEMAyY1wsnV/GeXtx0nFeObtqFxX8GiNCgW2HlN140=
 github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218/go.mod h1:xhMGdgCGKCUkHF00h4b0qMA50fFe0sSV9DD844rIaYQ=
+github.com/bingoohuang/now v0.0.0-20190604021600-70970d3ad0e7 h1:V5w7+wQKuui8sxthUkckdOXBwE19cNkKStmVytlRJKA=
+github.com/bingoohuang/now v0.0.0-20190604021600-70970d3ad0e7/go.mod h1:SZou0n15kP/Z3Vq8lyuH59ML96lepeGzInZw0+KCFw4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

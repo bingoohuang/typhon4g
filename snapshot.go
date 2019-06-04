@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/bingoohuang/gou"
+	"github.com/bingoohuang/now"
 	"github.com/sirupsen/logrus"
 )
 
@@ -72,7 +72,7 @@ const DeletedAt = ".deletedAt."
 // SaveUpdates saves the updates to snapshot.
 func (s SnapshotService) Clear(confFile string) error {
 	from := filepath.Join(s.C.SnapshotsDir, confFile)
-	to := filepath.Join(s.C.SnapshotsDir, confFile+DeletedAt+gou.FormatDateLayout(time.Now(), "yyyyMMddHHmmss"))
+	to := filepath.Join(s.C.SnapshotsDir, confFile+DeletedAt+now.MakeNow().P)
 
 	return os.Rename(from, to)
 }

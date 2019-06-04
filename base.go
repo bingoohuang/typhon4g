@@ -3,6 +3,8 @@ package typhon4g
 import (
 	"sync"
 	"time"
+
+	"github.com/bingoohuang/now"
 )
 
 // BaseConf defines the base structure of conf file
@@ -79,7 +81,7 @@ func (b *BaseConf) TriggerChange(old, new *FileContent,
 
 	if len(b.listeners) == 0 {
 		items = append(items, ClientReportItem{Msg: "No listeners", ConfFile: b.confFile,
-			Time: time.Now().Format(time.RFC3339)})
+			Time: now.MakeNow().P})
 		return items
 	}
 
@@ -93,7 +95,7 @@ func (b *BaseConf) TriggerChange(old, new *FileContent,
 		})
 
 		items = append(items, ClientReportItem{Msg: msg, Ok: ok, ConfFile: b.confFile, Crc: new.Crc,
-			Time: time.Now().Format(time.RFC3339)})
+			Time: now.MakeNow().P})
 	}
 
 	return items

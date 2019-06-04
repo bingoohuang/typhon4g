@@ -1,9 +1,10 @@
 package typhon4g_test
 
 import (
+	"testing"
+
 	"github.com/bingoohuang/typhon4g"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestDiffProperties(t *testing.T) {
