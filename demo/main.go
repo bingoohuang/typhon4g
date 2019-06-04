@@ -3,11 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/bingoohuang/gou"
 	"github.com/bingoohuang/typhon4g"
 	"github.com/sirupsen/logrus"
-	"os"
-	"strings"
 )
 
 var ty *typhon4g.Runner
@@ -63,9 +64,9 @@ func main() {
 		fmt.Printf("Fields: %q\n", fields)
 
 		cmd := fields[0]
-	//for {
-	//	time.Sleep(10 * time.Second)
-	//	cmd := "put"
+		//for {
+		//	time.Sleep(10 * time.Second)
+		//	cmd := "put"
 		switch cmd {
 		case "put":
 			content := "name=" + gou.RandString(10) + "\nage=" + gou.RandomNum(3) + "\n"
