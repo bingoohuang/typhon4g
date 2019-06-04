@@ -122,7 +122,8 @@ func (c ConfigService) TryUploadReport(url string, report *ClientReport) bool {
 	return rsp.Status == 200
 }
 
-// PostConf posts the conf to the server, returns crc and error info.
+// PostConf posts the conf to the server with clientIps (blank/comma separated IP addresses or all)
+// returns crc and error info.
 func (c ConfigService) PostConf(confFile, raw, clientIps string) (string, error) {
 	succ := false
 	cached := c.C.LoadConfCache(confFile)
