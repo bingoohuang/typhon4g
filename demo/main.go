@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/bingoohuang/properties"
+
 	"github.com/bingoohuang/gou"
 	"github.com/bingoohuang/typhon4g"
 	"github.com/sirupsen/logrus"
@@ -28,6 +30,13 @@ var _ typhon4g.ConfFileChangeListener = (*MyListener)(nil)
 func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok bool) {
 	fmt.Printf("OnChange: %+v\n", event)
 	// eat your own dog food here
+	old, _ := properties.LoadString(event.Old)
+	cur, _ := properties.LoadString(event.Current)
+
+	properties.Diff(old, cur, func(e properties.DiffEvent) {
+		fmt.Println(e)
+	})
+
 	return "my message:" + gou.RandString(10), true /*  true to means changed OK */
 }
 
@@ -37,7 +46,13 @@ func main() {
 	if err != nil {
 		logrus.Panic(err)
 	}
-	fmt.Println(prop.Map())
+
+	propContent, _ := properties.LoadString(prop.Raw())
+	propContent.Set("Key", "Value")
+	newContent := propContent.String()
+	_, _ = ty.PostConf("hello.properties", newContent, "all")
+
+	fmt.Println(prop.Doc.Map())
 
 	hello, err := ty.ConfFile("hello.json")
 	if err != nil {
