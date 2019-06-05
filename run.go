@@ -71,7 +71,7 @@ func (r Runner) ConfFile(confFile string) (ConfFile, error) {
 	return nil, fmt.Errorf("failed to Load conf file %s", confFile)
 }
 
-// PostConf posts the conf to the server with clientIps(blank/comma separated or all) 
+// PostConf posts the conf to the server with clientIps(blank/comma separated or all)
 // returns crc and error.
 func (r Runner) PostConf(confFile, raw, clientIps string) (string, error) {
 	return r.ConfigService.PostConf(confFile, raw, clientIps)

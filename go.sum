@@ -12,6 +12,13 @@ github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218 h1:lTEMAyY1wsnV/Ge
 github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218/go.mod h1:xhMGdgCGKCUkHF00h4b0qMA50fFe0sSV9DD844rIaYQ=
 github.com/bingoohuang/now v0.0.0-20190604021600-70970d3ad0e7 h1:V5w7+wQKuui8sxthUkckdOXBwE19cNkKStmVytlRJKA=
 github.com/bingoohuang/now v0.0.0-20190604021600-70970d3ad0e7/go.mod h1:SZou0n15kP/Z3Vq8lyuH59ML96lepeGzInZw0+KCFw4=
+github.com/bingoohuang/properties v0.0.0-20190605045954-158aa0973c2e3cce6eacc1433096c4d1d7d94710/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
+github.com/bingoohuang/properties v0.0.0-20190605045954-1797f5b484d259ff26b000f0caff3938f91f9ab9/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
+github.com/bingoohuang/properties v0.0.0-20190605045954-ee3e9900e2c7 h1:t6XiP8KGIG2WT9QorE++hpPWo/xqWIgbv10mFNvkcN0=
+github.com/bingoohuang/properties v0.0.0-20190605045954-ee3e9900e2c7/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
+github.com/bingoohuang/properties v0.0.0-20190605052008-158aa0973c2e/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
+github.com/bingoohuang/properties v0.0.0-20190605060319-1797f5b484d2 h1:zD7P09UJyU7nEnjY+cJTlE88awsKpR6NLvcYzPaZ1MI=
+github.com/bingoohuang/properties v0.0.0-20190605060319-1797f5b484d2/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
