@@ -4,7 +4,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.3.3 // indirect
 	github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218
 	github.com/bingoohuang/now v0.0.0-20190604021600-70970d3ad0e7
-	github.com/bingoohuang/properties v0.0.0-20190605060319-1797f5b484d2
+	github.com/bingoohuang/properties v0.0.0-20190605061727-e557ec1f5bf7
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
