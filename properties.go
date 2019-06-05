@@ -43,12 +43,12 @@ func (p *PropertiesConfFile) ConfFormat() ConfFmt {
 
 // Str get the string value of key specified by name.
 func (p *PropertiesConfFile) Str(name string) string {
-	return p.Doc.String(name)
+	return p.Doc.Str(name)
 }
 
 // StrOr get the string value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) StrOr(name, defaultValue string) string {
-	return p.Doc.StringOr(name, defaultValue)
+	return p.Doc.StrOr(name, defaultValue)
 }
 
 // Bool get the bool value of key specified by name.
