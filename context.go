@@ -3,6 +3,7 @@ package typhon4g
 import (
 	"bytes"
 	"fmt"
+	"github.com/bingoohuang/properties"
 	"io"
 	"io/ioutil"
 	"os"
@@ -143,28 +144,28 @@ func LoadContextFile(contextFile string) (*TyphonContext, error) {
 
 // LoadContext loads the typhon context by reader.
 func LoadContext(reader io.Reader) (*TyphonContext, error) {
-	d, err := gou.LoadProperties(reader)
+	d, err := properties.Load(reader)
 	if nil != err {
 		return nil, err
 	}
 
-	sd := d.StringDefault("snapshotsDir", "~/.typhon-client/snapshots")
+	sd := d.StrOr("snapshotsDir", "~/.typhon-client/snapshots")
 	snapshotsDir, _ := homedir.Expand(sd)
 
 	c := &TyphonContext{
-		AppID:                        Required(d.String("appID"), "appID"),
-		postAuth:                     d.String("postAuth"),
-		ConnectTimeoutMillis:         d.IntDefault("connectTimeoutMillis", 1000),
-		ConfigReadTimeoutMillis:      d.IntDefault("configReadTimeoutMillis", 5000),
-		PollingReadTimeoutMillis:     d.IntDefault("pollingReadTimeoutMillis", 70000),
-		RetryNetworkSleepSeconds:     d.IntDefault("retryNetworkSleepSeconds", 60),
-		ConfigRefreshIntervalSeconds: d.IntDefault("configRefreshIntervalSeconds", 300),
-		MetaRefreshIntervalSeconds:   d.IntDefault("metaRefreshIntervalSeconds", 300),
+		AppID:                        Required(d.Str("appID"), "appID"),
+		postAuth:                     d.Str("postAuth"),
+		ConnectTimeoutMillis:         d.Int64Or("connectTimeoutMillis", 1000),
+		ConfigReadTimeoutMillis:      d.Int64Or("configReadTimeoutMillis", 5000),
+		PollingReadTimeoutMillis:     d.Int64Or("pollingReadTimeoutMillis", 70000),
+		RetryNetworkSleepSeconds:     d.Int64Or("retryNetworkSleepSeconds", 60),
+		ConfigRefreshIntervalSeconds: d.Int64Or("configRefreshIntervalSeconds", 300),
+		MetaRefreshIntervalSeconds:   d.Int64Or("metaRefreshIntervalSeconds", 300),
 	}
 
 	c.cache = make(map[string]*FileContent)
 	c.SnapshotsDir = MustMakeDirAll(filepath.Join(snapshotsDir, c.AppID))
-	c.MetaServers = c.createMetaServers(d.StringDefault("metaServers", "http://127.0.0.1:11683"))
+	c.MetaServers = c.createMetaServers(d.StrOr("metaServers", "http://127.0.0.1:11683"))
 
 	return c, nil
 }

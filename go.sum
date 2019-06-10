@@ -10,8 +10,12 @@ github.com/averagesecurityguy/random v0.0.0-20180326012618-37cce341d2af h1:P1psV
 github.com/averagesecurityguy/random v0.0.0-20180326012618-37cce341d2af/go.mod h1:xlqW8P0gOqVMB8Kp0mMuUznEi1PzjF+mhHTSC+ymalU=
 github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218 h1:lTEMAyY1wsnV/GeXtx0nFeObtqFxX8GiNCgW2HlN140=
 github.com/bingoohuang/gou v0.0.0-20190529021923-0d80b0351218/go.mod h1:xhMGdgCGKCUkHF00h4b0qMA50fFe0sSV9DD844rIaYQ=
+github.com/bingoohuang/gou v0.0.0-20190605070258-52d324f8b9f4 h1:nIi0FzK9bg5TOD8ZmoYj4Q0ULbVhJ5UtFe4+CnnYnWM=
+github.com/bingoohuang/gou v0.0.0-20190605070258-52d324f8b9f4/go.mod h1:BZKc9X/YGhsL9dFvouK9KO1wkzKTPy1kS2XvdWoBRvg=
 github.com/bingoohuang/now v0.0.0-20190604021600-70970d3ad0e7 h1:V5w7+wQKuui8sxthUkckdOXBwE19cNkKStmVytlRJKA=
 github.com/bingoohuang/now v0.0.0-20190604021600-70970d3ad0e7/go.mod h1:SZou0n15kP/Z3Vq8lyuH59ML96lepeGzInZw0+KCFw4=
+github.com/bingoohuang/now v0.0.0-20190606004815-23593911de12 h1:RbJYF39Qy37hbPfzgSuesiDJn3z2HfwTu+f0NtYRiNc=
+github.com/bingoohuang/now v0.0.0-20190606004815-23593911de12/go.mod h1:SZou0n15kP/Z3Vq8lyuH59ML96lepeGzInZw0+KCFw4=
 github.com/bingoohuang/properties v0.0.0-20190605045954-158aa0973c2e3cce6eacc1433096c4d1d7d94710/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
 github.com/bingoohuang/properties v0.0.0-20190605045954-1797f5b484d259ff26b000f0caff3938f91f9ab9/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
 github.com/bingoohuang/properties v0.0.0-20190605045954-ee3e9900e2c7 h1:t6XiP8KGIG2WT9QorE++hpPWo/xqWIgbv10mFNvkcN0=
@@ -21,6 +25,8 @@ github.com/bingoohuang/properties v0.0.0-20190605060319-1797f5b484d2 h1:zD7P09UJ
 github.com/bingoohuang/properties v0.0.0-20190605060319-1797f5b484d2/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
 github.com/bingoohuang/properties v0.0.0-20190605061727-e557ec1f5bf7 h1:K5Qc5J9oI7lqgzWALE8mp3xjrlCulU/98x1sbT1xTpY=
 github.com/bingoohuang/properties v0.0.0-20190605061727-e557ec1f5bf7/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
+github.com/bingoohuang/properties v0.0.0-20190605074057-97134956a6db h1:1cSpnIhts2RkkafeYfkrVZd1aJP2E36F6rTTiAkKOq8=
+github.com/bingoohuang/properties v0.0.0-20190605074057-97134956a6db/go.mod h1:+wHWzUMqJ4MjR1qG89eOcYQb2G7GJp1+nM7tCEG0NxI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -91,6 +97,8 @@ github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e h1:VAzdS5Nw
 github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e/go.mod h1:sUM3LWHvSMaG192sy56D9F7CNvL7jUJVXoqM1QKLnog=
 github.com/spf13/cast v1.3.0 h1:oget//CVOEoFewqQxwr0Ej5yjygnqGkvggSE/gB35Q8=
 github.com/spf13/cast v1.3.0/go.mod h1:Qx5cxh0v+4UWYiBimWS+eyWzqEqokIECu5etghLkUJE=
+github.com/spf13/pflag v1.0.3 h1:zPAT6CGy6wXeQ7NtTnaTerfKOsV6V6F8agHXFiazDkg=
+github.com/spf13/pflag v1.0.3/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
