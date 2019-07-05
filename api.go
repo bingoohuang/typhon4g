@@ -2,32 +2,32 @@ package typhon4g
 
 import (
 	"fmt"
-
-	"github.com/sirupsen/logrus"
+	"runtime"
 )
 
 // LoadStart loads and starts the typhon client.
 func LoadStart() (*Runner, error) {
-	r, err := newRunner("etc/typhon-context.properties")
-	if err != nil {
-		logrus.Warnf("unable to create default typhon typhon %v", err)
-		return nil, err
-	}
-
-	r.Start()
-	return r, nil
+	return LoadStartByFile("etc/typhon-context.properties")
 }
 
-func newRunner(contextFile string) (*Runner, error) {
-	context, err := LoadContextFile(contextFile)
+// LoadStartByFile loads and starts the typhon client.
+func LoadStartByFile(typhonContextFile string) (*Runner, error) {
+	context, err := LoadContextFile(typhonContextFile)
 	if err != nil {
-		return nil, fmt.Errorf("unable to Load %s, %v", contextFile, err)
+		return nil, fmt.Errorf("unable to Load %s, %v", typhonContextFile, err)
 	}
 
-	return &Runner{
+	return LoadStartByContext(context), nil
+}
+
+func LoadStartByContext(context *TyphonContext) *Runner {
+	r := &Runner{
 		C:               context,
 		SnapshotService: &SnapshotService{C: context},
 		MetaService:     &MetaService{C: context},
 		ConfigService:   &ConfigService{C: context},
-	}, nil
+	}
+	r.Start()
+	runtime.SetFinalizer(r, func(r *Runner) { r.Stop() })
+	return r
 }

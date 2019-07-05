@@ -13,7 +13,7 @@ type PollingService struct {
 }
 
 // Start starts the polling service loop.
-func (p PollingService) Start() {
+func (p PollingService) Start(stop chan bool) {
 	d := SecondsDuration(p.C.RetryNetworkSleepSeconds)
 
 	for {
@@ -21,6 +21,13 @@ func (p PollingService) Start() {
 			pollURL := strings.Replace(url, "/config/", "/notify/", 1)
 			return p.TryURL(pollURL, "", &p.Setting)
 		})
+
+		select {
+		case <-stop:
+			return
+		default:
+			// required goon
+		}
 
 		if !ok {
 			time.Sleep(d)

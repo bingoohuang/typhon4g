@@ -14,14 +14,19 @@ type MetaService struct {
 }
 
 // Start starts the meta refreshing loop
-func (m MetaService) Start() {
+func (m MetaService) Start(stop chan bool) {
 	d := SecondsDuration(m.C.MetaRefreshIntervalSeconds)
 	timer := time.NewTimer(d)
 	defer timer.Stop()
 
-	for range timer.C {
-		m.Try()
-		timer.Reset(d)
+	for {
+		select {
+		case <-stop:
+			return
+		case <-timer.C:
+			m.Try()
+			timer.Reset(d)
+		}
 	}
 }
 

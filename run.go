@@ -13,10 +13,11 @@ type Runner struct {
 	ConfigService   *ConfigService
 	MetaService     *MetaService
 	PollingService  *PollingService
+	stopChan        chan bool
 }
 
 // Start start the typhon.
-func (r Runner) Start() {
+func (r *Runner) Start() {
 	r.initConfigServerUrls()
 
 	r.MetaService.ConfigServersAddrUpdater = func(addr string) { r.SnapshotService.SaveMeta(addr) }
@@ -31,9 +32,16 @@ func (r Runner) Start() {
 	r.PollingService = &PollingService{ConfigService: *r.ConfigService}
 	r.PollingService.Setting.ReadWriteTimeout = MillisDuration(r.C.PollingReadTimeoutMillis)
 
-	go r.MetaService.Start()
-	go r.ConfigService.Start()
-	go r.PollingService.Start()
+	r.stopChan = make(chan bool, 3)
+	go r.MetaService.Start(r.stopChan)
+	go r.ConfigService.Start(r.stopChan)
+	go r.PollingService.Start(r.stopChan)
+}
+
+func (r *Runner) Stop() {
+	r.stopChan <- true
+	r.stopChan <- true
+	r.stopChan <- true
 }
 
 func (r Runner) initConfigServerUrls() {

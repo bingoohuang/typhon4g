@@ -18,16 +18,21 @@ type ConfigService struct {
 }
 
 // Start starts the refreshing loop of config service.
-func (c ConfigService) Start() {
+func (c ConfigService) Start(stop chan bool) {
 	c.Try("")
 
 	d := SecondsDuration(c.C.ConfigRefreshIntervalSeconds)
 	timer := time.NewTimer(d)
 	defer timer.Stop()
 
-	for range timer.C {
-		c.Try("")
-		timer.Reset(d)
+	for {
+		select {
+		case <-stop:
+			return
+		case <-timer.C:
+			c.Try("")
+			timer.Reset(d)
+		}
 	}
 }
 

@@ -3,13 +3,14 @@ package typhon4g
 import (
 	"bytes"
 	"fmt"
-	"github.com/bingoohuang/properties"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
+
+	"github.com/bingoohuang/properties"
 
 	"github.com/bingoohuang/gou"
 	"github.com/mitchellh/go-homedir"
