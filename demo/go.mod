@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/bingoohuang/gou v0.0.0-20190605070258-52d324f8b9f4
 	github.com/bingoohuang/properties v0.0.0-20190605074057-97134956a6db
-	github.com/bingoohuang/typhon4g v0.0.0-20190705025016-864bf908eec9
+	github.com/bingoohuang/typhon4g v0.0.0-20190711031614-bc9fc5f1b6e6
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365 // indirect
 	github.com/kr/pty v1.1.4 // indirect
 	github.com/sirupsen/logrus v1.4.2

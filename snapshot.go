@@ -12,7 +12,7 @@ import (
 
 // SnapshotService defines the snapshot service of typhon client
 type SnapshotService struct {
-	C *TyphonContext
+	C *Context
 }
 
 // Load loads the snapshot in file.

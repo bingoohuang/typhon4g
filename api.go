@@ -38,7 +38,7 @@ func LoadStartByFile(typhonContextFile string) (*Runner, error) {
 	return LoadStartByContext(context), nil
 }
 
-func LoadStartByContext(context *TyphonContext) *Runner {
+func LoadStartByContext(context *Context) *Runner {
 	r := &Runner{
 		C:               context,
 		SnapshotService: &SnapshotService{C: context},

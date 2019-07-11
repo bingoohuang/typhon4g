@@ -13,7 +13,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 type MyListener struct{}
 
 // Make sure that MyListener implements the interface typhon4g.ConfFileChangeListener

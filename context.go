@@ -17,8 +17,8 @@ import (
 	"github.com/thoas/go-funk"
 )
 
-// TyphonContext defines the context of typhon client.
-type TyphonContext struct {
+// Context defines the context of typhon client.
+type Context struct {
 	// AppID defines the global appID of the typhon client.
 	AppID string `json:"appID"`
 
@@ -49,7 +49,7 @@ type TyphonContext struct {
 }
 
 // LoadConfFile loads the conf file by name confFile.
-func (c *TyphonContext) LoadConfFile(confFile string) ConfFile {
+func (c *Context) LoadConfFile(confFile string) ConfFile {
 	if fc := c.LoadConfCache(confFile); fc != nil {
 		return fc.conf
 	}
@@ -58,7 +58,7 @@ func (c *TyphonContext) LoadConfFile(confFile string) ConfFile {
 }
 
 // ClearCache clears the conf cache by name confFile.
-func (c *TyphonContext) ClearCache(confFile string) {
+func (c *Context) ClearCache(confFile string) {
 	c.cacheLock.RLock()
 	defer c.cacheLock.RUnlock()
 
@@ -66,7 +66,7 @@ func (c *TyphonContext) ClearCache(confFile string) {
 		delete(c.cache, confFile)
 	}
 }
-func (c *TyphonContext) LoadConfCache(confFile string) *FileContent {
+func (c *Context) LoadConfCache(confFile string) *FileContent {
 	c.cacheLock.RLock()
 	defer c.cacheLock.RUnlock()
 
@@ -78,7 +78,7 @@ func (c *TyphonContext) LoadConfCache(confFile string) *FileContent {
 }
 
 // SaveFileContents saves the file contents to cache and snapshot.
-func (c *TyphonContext) SaveFileContents(fcs []FileContent, triggerListeners bool) *ClientReport {
+func (c *Context) SaveFileContents(fcs []FileContent, triggerListeners bool) *ClientReport {
 	items := make([]ClientReportItem, 0)
 
 	c.cacheLock.Lock()
@@ -111,7 +111,7 @@ func (c *TyphonContext) SaveFileContents(fcs []FileContent, triggerListeners boo
 }
 
 // RecoverFileContent recover the conf file from snapshot.
-func (c *TyphonContext) RecoverFileContent(fc *FileContent) {
+func (c *Context) RecoverFileContent(fc *FileContent) {
 	c.cacheLock.Lock()
 	defer c.cacheLock.Unlock()
 
@@ -120,7 +120,7 @@ func (c *TyphonContext) RecoverFileContent(fc *FileContent) {
 }
 
 // WalkFileContents walks the cache.
-func (c *TyphonContext) WalkFileContents(fn func(confFile string, fileContext *FileContent)) {
+func (c *Context) WalkFileContents(fn func(confFile string, fileContext *FileContent)) {
 	c.cacheLock.RLock()
 	defer c.cacheLock.RUnlock()
 
@@ -130,7 +130,7 @@ func (c *TyphonContext) WalkFileContents(fn func(confFile string, fileContext *F
 }
 
 // LoadContextFile load the typhon context by file contextFile
-func LoadContextFile(contextFile string) (*TyphonContext, error) {
+func LoadContextFile(contextFile string) (*Context, error) {
 	if _, err := os.Stat(contextFile); err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func LoadContextFile(contextFile string) (*TyphonContext, error) {
 }
 
 // LoadContext loads the typhon context by reader.
-func LoadContext(reader io.Reader) (*TyphonContext, error) {
+func LoadContext(reader io.Reader) (*Context, error) {
 	d, err := properties.Load(reader)
 	if nil != err {
 		return nil, err
@@ -153,7 +153,7 @@ func LoadContext(reader io.Reader) (*TyphonContext, error) {
 	sd := d.StrOr("snapshotsDir", "~/.typhon-client/snapshots")
 	snapshotsDir, _ := homedir.Expand(sd)
 
-	c := &TyphonContext{
+	c := &Context{
 		AppID:                        Required(d.Str("appID"), "appID"),
 		postAuth:                     d.Str("postAuth"),
 		ConnectTimeoutMillis:         d.Int64Or("connectTimeoutMillis", 1000),
@@ -171,12 +171,12 @@ func LoadContext(reader io.Reader) (*TyphonContext, error) {
 	return c, nil
 }
 
-func (c *TyphonContext) createMetaServers(metaServers string) []string {
+func (c *Context) createMetaServers(metaServers string) []string {
 	return funk.Map(gou.SplitN(metaServers, ",", true, true),
 		func(meta string) string { return meta + "/meta" }).([]string)
 }
 
-func (c *TyphonContext) createConfigServers(configServers string) []string {
+func (c *Context) createConfigServers(configServers string) []string {
 	return funk.Map(gou.SplitN(configServers, ",", true, true),
 		func(url string) string { return url + "/client/config/" + c.AppID }).([]string)
 }

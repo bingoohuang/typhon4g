@@ -37,14 +37,10 @@ func NewPropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 }
 
 // ConfFormat gets the format of conf file
-func (p *PropertiesConfFile) ConfFormat() ConfFmt {
-	return PropertiesFmt
-}
+func (p *PropertiesConfFile) ConfFormat() ConfFmt { return PropertiesFmt }
 
 // Str get the string value of key specified by name.
-func (p *PropertiesConfFile) Str(name string) string {
-	return p.Doc.Str(name)
-}
+func (p *PropertiesConfFile) Str(name string) string { return p.Doc.Str(name) }
 
 // StrOr get the string value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) StrOr(name, defaultValue string) string {
@@ -52,9 +48,7 @@ func (p *PropertiesConfFile) StrOr(name, defaultValue string) string {
 }
 
 // Bool get the bool value of key specified by name.
-func (p *PropertiesConfFile) Bool(name string) bool {
-	return p.Doc.Bool(name)
-}
+func (p *PropertiesConfFile) Bool(name string) bool { return p.Doc.Bool(name) }
 
 // BoolOr get the bool value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) BoolOr(name string, defaultValue bool) bool {
@@ -62,9 +56,7 @@ func (p *PropertiesConfFile) BoolOr(name string, defaultValue bool) bool {
 }
 
 // Int get the int value of key specified by name.
-func (p *PropertiesConfFile) Int(name string) int {
-	return p.Doc.Int(name)
-}
+func (p *PropertiesConfFile) Int(name string) int { return p.Doc.Int(name) }
 
 // IntOr get the int value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) IntOr(name string, defaultValue int) int {
@@ -72,9 +64,7 @@ func (p *PropertiesConfFile) IntOr(name string, defaultValue int) int {
 }
 
 // Int32 get the int32 value of key specified by name.
-func (p *PropertiesConfFile) Int32(name string) int32 {
-	return int32(p.Doc.Int64(name))
-}
+func (p *PropertiesConfFile) Int32(name string) int32 { return int32(p.Doc.Int64(name)) }
 
 // Int32Or get the int32 value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) Int32Or(name string, defaultValue int32) int32 {
@@ -82,9 +72,7 @@ func (p *PropertiesConfFile) Int32Or(name string, defaultValue int32) int32 {
 }
 
 // Int64 get the int64 value of key specified by name.
-func (p *PropertiesConfFile) Int64(name string) int64 {
-	return p.Doc.Int64(name)
-}
+func (p *PropertiesConfFile) Int64(name string) int64 { return p.Doc.Int64(name) }
 
 // Int64Or get the int64 value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) Int64Or(name string, defaultValue int64) int64 {
@@ -92,9 +80,7 @@ func (p *PropertiesConfFile) Int64Or(name string, defaultValue int64) int64 {
 }
 
 // Float32 get the float32 value of key specified by name.
-func (p *PropertiesConfFile) Float32(name string) float32 {
-	return float32(p.Doc.Float64(name))
-}
+func (p *PropertiesConfFile) Float32(name string) float32 { return float32(p.Doc.Float64(name)) }
 
 // Float32Or get the float32 value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) Float32Or(name string, defaultValue float32) float32 {
@@ -102,9 +88,7 @@ func (p *PropertiesConfFile) Float32Or(name string, defaultValue float32) float3
 }
 
 // Float64 get the float64 value of key specified by name.
-func (p *PropertiesConfFile) Float64(name string) float64 {
-	return p.Doc.Float64(name)
-}
+func (p *PropertiesConfFile) Float64(name string) float64 { return p.Doc.Float64(name) }
 
 // Float64Or get the float64 value of key specified by name or defaultValue when value is empty or missed.
 func (p *PropertiesConfFile) Float64Or(name string, defaultValue float64) float64 {

@@ -8,7 +8,7 @@ import (
 
 // Runner defines the typhon-client typhon service.
 type Runner struct {
-	C               *TyphonContext
+	C               *Context
 	SnapshotService *SnapshotService
 	ConfigService   *ConfigService
 	MetaService     *MetaService

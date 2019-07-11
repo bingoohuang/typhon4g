@@ -11,7 +11,7 @@ import (
 
 // ConfigService defines the structure used for config refresh/write service
 type ConfigService struct {
-	C                 *TyphonContext
+	C                 *Context
 	Setting           gou.UrlHttpSettings
 	UpdateSnapshotsFn func([]FileContent)
 	ClearSnapshotFn   func(string)
@@ -180,11 +180,9 @@ func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, inte
 
 // ListenerResults gets the listener results from the server.
 func (c ConfigService) ListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
-	ok, res := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
+	if ok, res := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
 		return c.TryListenerResults(url, confFile, crc)
-	})
-
-	if ok {
+	}); ok {
 		return res.([]ClientReportRspItem), nil
 	}
 

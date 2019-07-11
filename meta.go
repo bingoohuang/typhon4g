@@ -9,7 +9,7 @@ import (
 
 // MetaService defines the meta refreshing service.
 type MetaService struct {
-	C                        *TyphonContext
+	C                        *Context
 	ConfigServersAddrUpdater func(string)
 }
 
