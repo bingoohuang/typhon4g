@@ -3,10 +3,9 @@ module typhon4g-demo
 go 1.12
 
 require (
-	github.com/bingoohuang/gou v0.0.0-20190604094204-97de1518387a
-	github.com/bingoohuang/now v0.0.0-20190604094221-3e973286dd2a // indirect
-	github.com/bingoohuang/properties v0.0.0-20190605061727-e557ec1f5bf7
-	github.com/bingoohuang/typhon4g v0.0.0-20190605062756-52653d60e37c
+	github.com/bingoohuang/gou v0.0.0-20190605070258-52d324f8b9f4
+	github.com/bingoohuang/properties v0.0.0-20190605074057-97134956a6db
+	github.com/bingoohuang/typhon4g v0.0.0-20190705025016-864bf908eec9
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365 // indirect
 	github.com/kr/pty v1.1.4 // indirect
 	github.com/sirupsen/logrus v1.4.2

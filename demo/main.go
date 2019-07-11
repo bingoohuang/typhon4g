@@ -13,14 +13,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var ty *typhon4g.Runner
-
-func init() {
-	var err error
-	if ty, err = typhon4g.LoadStart(); err != nil {
-		logrus.Panic(err)
-	}
-}
 
 type MyListener struct{}
 
@@ -41,6 +33,7 @@ func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok
 }
 
 func main() {
+	ty := typhon4g.MustLoadStart()
 	var err error
 	prop, err := ty.Properties("hello.properties")
 	if err != nil {

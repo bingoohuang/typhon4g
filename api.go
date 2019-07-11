@@ -5,9 +5,27 @@ import (
 	"runtime"
 )
 
+// MustLoadStart loads and starts the typhon client.
+func MustLoadStart() *Runner {
+	if r, e := LoadStart(); e != nil {
+		panic(e)
+	} else {
+		return r
+	}
+}
+
 // LoadStart loads and starts the typhon client.
 func LoadStart() (*Runner, error) {
 	return LoadStartByFile("etc/typhon-context.properties")
+}
+
+// MustLoadStartByFile loads and starts the typhon client.
+func MustLoadStartByFile(typhonContextFile string) *Runner {
+	if r, e := LoadStartByFile(typhonContextFile); e != nil {
+		panic(e)
+	} else {
+		return r
+	}
 }
 
 // LoadStartByFile loads and starts the typhon client.
