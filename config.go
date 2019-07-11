@@ -75,7 +75,7 @@ func (c ConfigService) TryURL(url, confFile string, setting *gou.UrlHttpSettings
 	}
 
 	if len(rsp.Data) == 0 {
-		return false, nil
+		return true, nil
 	}
 
 	c.UpdateSnapshotsFn(rsp.Data)
