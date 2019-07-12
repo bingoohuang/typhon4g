@@ -33,7 +33,6 @@ func (r *Runner) Start() {
 	r.PollingService = &PollingService{ConfigService: *r.ConfigService}
 	r.PollingService.Setting = gonet.NewReqOption()
 	r.PollingService.Setting.TLSClientConfig = r.C.ReqOption.TLSClientConfig
-	r.PollingService.Setting.ConnectTimeout = MillisDuration(r.C.ConnectTimeoutMillis)
 	r.PollingService.Setting.ReadWriteTimeout = MillisDuration(r.C.PollingReadTimeoutMillis)
 
 	r.stopChan = make(chan bool, 3)
