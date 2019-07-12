@@ -29,6 +29,8 @@ github.com/bingoohuang/typhon4g v0.0.0-20190711085044-95992dfad6d8 h1:vBbLYT6thh
 github.com/bingoohuang/typhon4g v0.0.0-20190711085044-95992dfad6d8/go.mod h1:Qdfgz+5nTJZRzwpgx3NnhVxu2lUZ68AjOd/uAxbxRDA=
 github.com/bingoohuang/typhon4g v0.0.0-20190712025618-60ab4452c01f h1:L10TCkr3IiON6YUHNJJROSMaf3E0abDtT4Kh/qH7fco=
 github.com/bingoohuang/typhon4g v0.0.0-20190712025618-60ab4452c01f/go.mod h1:TwlhtXoIRpm1Zh8dfdUDqDcI6yRjLrv7kY66DmZGTy0=
+github.com/bingoohuang/typhon4g v0.0.0-20190712090205-637c77c47f8d h1:fa2tvPDH5xcE4TqwMa10BRUvh5BSKtRkrPh5h+l0RD0=
+github.com/bingoohuang/typhon4g v0.0.0-20190712090205-637c77c47f8d/go.mod h1:TwlhtXoIRpm1Zh8dfdUDqDcI6yRjLrv7kY66DmZGTy0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
