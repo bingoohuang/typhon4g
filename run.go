@@ -3,7 +3,7 @@ package typhon4g
 import (
 	"fmt"
 
-	"github.com/bingoohuang/gou"
+	"github.com/bingoohuang/gonet"
 )
 
 // Runner defines the typhon-client typhon service.
@@ -25,7 +25,7 @@ func (r *Runner) Start() {
 
 	r.ConfigService.UpdateSnapshotsFn = func(updates []FileContent) { r.SnapshotService.SaveUpdates(updates) }
 	r.ConfigService.ClearSnapshotFn = func(confFile string) { _ = r.SnapshotService.Clear(confFile) }
-	r.ConfigService.Setting = *gou.GetDefaultSetting()
+	r.ConfigService.Setting = gonet.NewReqOption()
 	r.ConfigService.Setting.ConnectTimeout = MillisDuration(r.C.ConnectTimeoutMillis)
 	r.ConfigService.Setting.ReadWriteTimeout = MillisDuration(r.C.ConfigReadTimeoutMillis)
 

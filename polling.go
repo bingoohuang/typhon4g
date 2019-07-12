@@ -19,7 +19,7 @@ func (p PollingService) Start(stop chan bool) {
 	for {
 		ok, _ := gou.RandomIterateSlice(p.C.ConfigServers, func(url string) (bool, interface{}) {
 			pollURL := strings.Replace(url, "/config/", "/notify/", 1)
-			return p.TryURL(pollURL, "", &p.Setting)
+			return p.TryURL(pollURL, "", p.Setting)
 		})
 
 		select {

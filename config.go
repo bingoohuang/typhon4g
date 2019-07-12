@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bingoohuang/gonet"
 	"github.com/bingoohuang/gou"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -12,14 +13,13 @@ import (
 // ConfigService defines the structure used for config refresh/write service
 type ConfigService struct {
 	C                 *Context
-	Setting           gou.UrlHttpSettings
+	Setting           *gonet.ReqOption
 	UpdateSnapshotsFn func([]FileContent)
 	ClearSnapshotFn   func(string)
 }
 
 // Start starts the refreshing loop of config service.
 func (c ConfigService) Start(stop chan bool) {
-	c.Try("")
 
 	d := SecondsDuration(c.C.ConfigRefreshIntervalSeconds)
 	timer := time.NewTimer(d)
@@ -39,7 +39,7 @@ func (c ConfigService) Start(stop chan bool) {
 // Try tries to refresh conf defined by confFile or all (confFile is empty).
 func (c ConfigService) Try(confFile string) (bool, ConfFile) {
 	hit, cf := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
-		return c.TryURL(url, confFile, &c.Setting)
+		return c.TryURL(url, confFile, c.Setting)
 	})
 
 	if cf != nil {
@@ -50,7 +50,7 @@ func (c ConfigService) Try(confFile string) (bool, ConfFile) {
 }
 
 // TryURL tries to refresh conf defined by confFile or all (confFile is empty) in specified URL.
-func (c ConfigService) TryURL(url, confFile string, setting *gou.UrlHttpSettings) (bool, interface{}) {
+func (c ConfigService) TryURL(url, confFile string, setting *gonet.ReqOption) (bool, interface{}) {
 	confFileCrc := ""
 	if confFile != "" {
 		confFileCrc = confFile + ":0"
@@ -68,7 +68,7 @@ func (c ConfigService) TryURL(url, confFile string, setting *gou.UrlHttpSettings
 		Data    []FileContent `json:"data"`
 	}
 
-	err := gou.RestGetV2(clientURL, &rsp, setting)
+	err := setting.RestGet(clientURL, &rsp)
 	if err != nil {
 		logrus.Warnf("fail to RefreshConfig %s, error %v", clientURL, err)
 		return false, nil
@@ -108,20 +108,19 @@ func (c ConfigService) UploadReport(report *ClientReport) {
 	})
 }
 
-// SetBasicAuth adds basic auth the the http request.
-func (c ConfigService) SetBasicAuth(r *gou.UrlHttpRequest) error {
+// basicAuth adds basic auth the the http request.
+func (c ConfigService) basicAuth(r *gonet.HTTPReq) {
 	if c.C.postAuth != "" {
 		usr, pas := gou.Split2(c.C.postAuth, ":", true, false)
-		r.SetBasicAuth(usr, pas)
+		r.BasicAuth(usr, pas)
 	}
-	return nil
 }
 
 // TryUploadReport try to upload report.
-func (c ConfigService) TryUploadReport(url string, report *ClientReport) bool {
+func (c *ConfigService) TryUploadReport(url string, report *ClientReport) bool {
 	var rsp RspHead
 	reportURL := strings.Replace(url, "/client/config/", "/admin/report/", 1)
-	rspBody, err := gou.RestPostFn(reportURL, report, &rsp, c.SetBasicAuth)
+	rspBody, err := c.Setting.RestPostFn(reportURL, report, &rsp, c.basicAuth)
 	logrus.Infof("report response %s, error %v", string(rspBody), err)
 
 	return rsp.Status == 200
@@ -169,11 +168,11 @@ func (c ConfigService) PostConf(confFile, raw, clientIps string) (string, error)
 }
 
 // TryPost try to post conf the server in specified url.
-func (c ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, interface{}) {
+func (c *ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, interface{}) {
 	postURL := strings.Replace(url, "/client/config/", "/admin/release/", 1) +
 		"/" + confFile + "?clientIps=" + clientIps
 	var rsp PostRsp
-	_, _ = gou.RestPostFn(postURL, ReqBody{Data: raw}, &rsp, c.SetBasicAuth)
+	_, _ = c.Setting.RestPostFn(postURL, ReqBody{Data: raw}, &rsp, c.basicAuth)
 
 	return rsp.Status == 200, rsp.Crc
 }
@@ -190,11 +189,11 @@ func (c ConfigService) ListenerResults(confFile, crc string) ([]ClientReportRspI
 }
 
 // TryListenerResults tries to get listeners results from the server specified url.
-func (c ConfigService) TryListenerResults(url, confFile, crc string) (bool, interface{}) {
+func (c *ConfigService) TryListenerResults(url, confFile, crc string) (bool, interface{}) {
 	reportURL := strings.Replace(url, "/config/", "/report/", 1) + "?confFile=" + confFile + "&crc=" + crc
 
 	var rsp ClientReportRsp
-	err := gou.RestGetV2(reportURL, &rsp, &c.Setting)
+	err := c.Setting.RestGet(reportURL, &rsp)
 	if err != nil || rsp.Status != 200 {
 		logrus.Warnf("fail to TryListenerResults %s, error %v", reportURL, err)
 		return false, nil
