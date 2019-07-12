@@ -3,8 +3,6 @@ package typhon4g
 import (
 	"time"
 
-	"github.com/bingoohuang/gonet"
-
 	"github.com/bingoohuang/gou"
 	"github.com/sirupsen/logrus"
 )
@@ -63,7 +61,7 @@ func (m MetaService) TryURL(url string) ([]string, error) {
 		Message string `json:"message"`
 		Data    string `json:"data"`
 	}
-	if err := gonet.RestGet(url, &rsp); err != nil {
+	if err := m.C.ReqOption.RestGet(url, &rsp); err != nil {
 		return nil, err
 	}
 

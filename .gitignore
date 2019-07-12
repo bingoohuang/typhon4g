@@ -10,6 +10,7 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-.idea
-demo/etc/snapshots
-demo/typhon4g-demo
+/.idea
+/demo/etc/snapshots
+/demo/typhon4g-demo
+.DS_Store

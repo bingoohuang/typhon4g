@@ -2,6 +2,7 @@ package typhon4g
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -9,6 +10,8 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+
+	"github.com/bingoohuang/gonet"
 
 	"github.com/bingoohuang/properties"
 
@@ -45,7 +48,11 @@ type Context struct {
 	cache     map[string]*FileContent // file->content
 	cacheLock sync.RWMutex
 
-	postAuth string
+	PostAuth string
+
+	ReqOption *gonet.ReqOption
+	ClientCrt string
+	ClientKey string
 }
 
 // LoadConfFile loads the conf file by name confFile.
@@ -155,18 +162,29 @@ func LoadContext(reader io.Reader) (*Context, error) {
 
 	c := &Context{
 		AppID:                        Required(d.Str("appID"), "appID"),
-		postAuth:                     d.Str("postAuth"),
 		ConnectTimeoutMillis:         d.Int64Or("connectTimeoutMillis", 1000),
 		ConfigReadTimeoutMillis:      d.Int64Or("configReadTimeoutMillis", 5000),
 		PollingReadTimeoutMillis:     d.Int64Or("pollingReadTimeoutMillis", 70000),
 		RetryNetworkSleepSeconds:     d.Int64Or("retryNetworkSleepSeconds", 60),
 		ConfigRefreshIntervalSeconds: d.Int64Or("configRefreshIntervalSeconds", 300),
 		MetaRefreshIntervalSeconds:   d.Int64Or("metaRefreshIntervalSeconds", 300),
+
+		PostAuth:  d.Str("postAuth"),
+		ClientCrt: d.Str("clientCrt"),
+		ClientKey: d.Str("clientKey"),
 	}
 
 	c.cache = make(map[string]*FileContent)
 	c.SnapshotsDir = MustMakeDirAll(filepath.Join(snapshotsDir, c.AppID))
 	c.MetaServers = c.createMetaServers(d.StrOr("metaServers", "http://127.0.0.1:11683"))
+
+	c.ReqOption = gonet.NewReqOption()
+
+	if c.ClientCrt != "" && c.ClientKey != "" {
+		c.ReqOption.TLSClientConfig = gonet.MustCreateClientTLSConfig(c.ClientKey, c.ClientCrt)
+	} else {
+		c.ReqOption.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
+	}
 
 	return c, nil
 }

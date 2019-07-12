@@ -68,7 +68,7 @@ func (c ConfigService) TryURL(url, confFile string, setting *gonet.ReqOption) (b
 		Data    []FileContent `json:"data"`
 	}
 
-	err := setting.RestGet(clientURL, &rsp)
+	err := c.C.ReqOption.RestGet(clientURL, &rsp)
 	if err != nil {
 		logrus.Warnf("fail to RefreshConfig %s, error %v", clientURL, err)
 		return false, nil
@@ -110,8 +110,8 @@ func (c ConfigService) UploadReport(report *ClientReport) {
 
 // basicAuth adds basic auth the the http request.
 func (c ConfigService) basicAuth(r *gonet.HTTPReq) {
-	if c.C.postAuth != "" {
-		usr, pas := gou.Split2(c.C.postAuth, ":", true, false)
+	if c.C.PostAuth != "" {
+		usr, pas := gou.Split2(c.C.PostAuth, ":", true, false)
 		r.BasicAuth(usr, pas)
 	}
 }

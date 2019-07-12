@@ -26,6 +26,7 @@ func (r *Runner) Start() {
 	r.ConfigService.UpdateSnapshotsFn = func(updates []FileContent) { r.SnapshotService.SaveUpdates(updates) }
 	r.ConfigService.ClearSnapshotFn = func(confFile string) { _ = r.SnapshotService.Clear(confFile) }
 	r.ConfigService.Setting = gonet.NewReqOption()
+	r.ConfigService.Setting.TLSClientConfig = r.C.ReqOption.TLSClientConfig
 	r.ConfigService.Setting.ConnectTimeout = MillisDuration(r.C.ConnectTimeoutMillis)
 	r.ConfigService.Setting.ReadWriteTimeout = MillisDuration(r.C.ConfigReadTimeoutMillis)
 
