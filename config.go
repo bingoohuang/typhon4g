@@ -21,7 +21,7 @@ type ConfigService struct {
 }
 
 // Start starts the refreshing loop of config service.
-func (c ConfigService) Start(stop chan bool) {
+func (c *ConfigService) Start(stop chan bool) {
 
 	d := SecondsDuration(c.C.ConfigRefreshIntervalSeconds)
 	timer := time.NewTimer(d)
@@ -39,9 +39,9 @@ func (c ConfigService) Start(stop chan bool) {
 }
 
 // Try tries to refresh conf defined by confFile or all (confFile is empty).
-func (c ConfigService) Try(confFile string) (bool, ConfFile) {
+func (c *ConfigService) Try(confFile string) (bool, ConfFile) {
 	hit, cf := goreflect.IterateSlice(c.C.ConfigServers, -1, func(url string) (bool, interface{}) {
-		return c.TryURL(url, confFile, c.Setting)
+		return c.TryURL(url, confFile)
 	})
 
 	if cf != nil {
@@ -52,7 +52,7 @@ func (c ConfigService) Try(confFile string) (bool, ConfFile) {
 }
 
 // TryURL tries to refresh conf defined by confFile or all (confFile is empty) in specified URL.
-func (c ConfigService) TryURL(url, confFile string, setting *gonet.ReqOption) (bool, interface{}) {
+func (c *ConfigService) TryURL(url, confFile string) (bool, interface{}) {
 	confFileCrc := ""
 	if confFile != "" {
 		confFileCrc = confFile + ":0"
@@ -70,7 +70,7 @@ func (c ConfigService) TryURL(url, confFile string, setting *gonet.ReqOption) (b
 		Data    []FileContent `json:"data"`
 	}
 
-	err := c.C.ReqOption.RestGet(clientURL, &rsp)
+	err := c.Setting.RestGet(clientURL, &rsp)
 	if err != nil {
 		logrus.Warnf("fail to RefreshConfig %s, error %v", clientURL, err)
 		return false, nil

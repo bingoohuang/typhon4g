@@ -19,7 +19,7 @@ func (p PollingService) Start(stop chan bool) {
 	for {
 		ok, _ := goreflect.IterateSlice(p.C.ConfigServers, -1, func(url string) (bool, interface{}) {
 			pollURL := strings.Replace(url, "/config/", "/notify/", 1)
-			return p.TryURL(pollURL, "", p.Setting)
+			return p.TryURL(pollURL, "")
 		})
 
 		select {
