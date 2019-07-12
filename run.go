@@ -31,6 +31,7 @@ func (r *Runner) Start() {
 	r.ConfigService.Setting.ReadWriteTimeout = MillisDuration(r.C.ConfigReadTimeoutMillis)
 
 	r.PollingService = &PollingService{ConfigService: *r.ConfigService}
+	r.PollingService.Setting = gonet.NewReqOption()
 	r.PollingService.Setting.TLSClientConfig = r.C.ReqOption.TLSClientConfig
 	r.PollingService.Setting.ReadWriteTimeout = MillisDuration(r.C.PollingReadTimeoutMillis)
 
