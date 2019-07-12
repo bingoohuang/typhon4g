@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bingoohuang/goreflect"
+
 	"github.com/bingoohuang/gonet"
 	"github.com/bingoohuang/gou"
 	"github.com/pkg/errors"
@@ -38,7 +40,7 @@ func (c ConfigService) Start(stop chan bool) {
 
 // Try tries to refresh conf defined by confFile or all (confFile is empty).
 func (c ConfigService) Try(confFile string) (bool, ConfFile) {
-	hit, cf := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
+	hit, cf := goreflect.IterateSlice(c.C.ConfigServers, -1, func(url string) (bool, interface{}) {
 		return c.TryURL(url, confFile, c.Setting)
 	})
 
@@ -103,7 +105,7 @@ func (c ConfigService) CreateConfFileCrcs() string {
 
 // UploadReport uploads the listeners reports.
 func (c ConfigService) UploadReport(report *ClientReport) {
-	_, _ = gou.RandomIterateSlice(c.C.ConfigServers, func(url string) bool {
+	_, _ = goreflect.IterateSlice(c.C.ConfigServers, -1, func(url string) bool {
 		return c.TryUploadReport(url, report)
 	})
 }
@@ -155,7 +157,7 @@ func (c ConfigService) PostConf(confFile, raw, clientIps string) (string, error)
 		}
 	}()
 
-	ok, res := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
+	ok, res := goreflect.IterateSlice(c.C.ConfigServers, -1, func(url string) (bool, interface{}) {
 		return c.TryPost(url, confFile, raw, clientIps)
 	})
 
@@ -179,7 +181,7 @@ func (c *ConfigService) TryPost(url, confFile, raw, clientIps string) (bool, int
 
 // ListenerResults gets the listener results from the server.
 func (c ConfigService) ListenerResults(confFile, crc string) ([]ClientReportRspItem, error) {
-	if ok, res := gou.RandomIterateSlice(c.C.ConfigServers, func(url string) (bool, interface{}) {
+	if ok, res := goreflect.IterateSlice(c.C.ConfigServers, -1, func(url string) (bool, interface{}) {
 		return c.TryListenerResults(url, confFile, crc)
 	}); ok {
 		return res.([]ClientReportRspItem), nil

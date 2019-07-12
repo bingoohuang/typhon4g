@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bingoohuang/gou"
+	"github.com/bingoohuang/goreflect"
 )
 
 // PollingService defines the polling service.
@@ -17,7 +17,7 @@ func (p PollingService) Start(stop chan bool) {
 	d := SecondsDuration(p.C.RetryNetworkSleepSeconds)
 
 	for {
-		ok, _ := gou.RandomIterateSlice(p.C.ConfigServers, func(url string) (bool, interface{}) {
+		ok, _ := goreflect.IterateSlice(p.C.ConfigServers, -1, func(url string) (bool, interface{}) {
 			pollURL := strings.Replace(url, "/config/", "/notify/", 1)
 			return p.TryURL(pollURL, "", p.Setting)
 		})

@@ -3,7 +3,8 @@ package typhon4g
 import (
 	"time"
 
-	"github.com/bingoohuang/gou"
+	"github.com/bingoohuang/goreflect"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,7 +34,7 @@ func (m MetaService) Start(stop chan bool) {
 // Try try to refresh meta.
 func (m MetaService) Try() {
 	var configServerUrls []string
-	gou.RandomIterateSlice(m.C.MetaServers, func(url string) bool {
+	goreflect.IterateSlice(m.C.MetaServers, -1, func(url string) bool {
 		var err error
 		configServerUrls, err = m.TryURL(url)
 		if err != nil {

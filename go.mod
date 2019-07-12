@@ -1,23 +1,15 @@
 module github.com/bingoohuang/typhon4g
 
+go 1.12
+
 require (
-	github.com/bingoohuang/gonet v0.0.0-20190712024602-1a7292d2819f
-	github.com/bingoohuang/gou v0.0.0-20190712024745-60cde53ac79d
+	github.com/bingoohuang/gonet v0.0.0-20190712083947-7c8eaeb7cf96
+	github.com/bingoohuang/goreflect v0.0.0-20190712052741-f9e6d0b5f7fd
+	github.com/bingoohuang/gou v0.0.0-20190712054827-f94fc6d5691b
 	github.com/bingoohuang/now v0.0.0-20190606004815-23593911de12
 	github.com/bingoohuang/properties v0.0.0-20190613141626-fec573f3799d
-	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/kr/pretty v0.1.0 // indirect
-	github.com/mattn/go-isatty v0.0.8 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.4.2
-	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e // indirect
 	github.com/thoas/go-funk v0.4.0
-	golang.org/x/net v0.0.0-20190522155817-f3200d17e092 // indirect
-	golang.org/x/sys v0.0.0-20190602015325-4c4f7f33c9ed // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
-
-replace github.com/tdewolff/parse => github.com/tdewolff/parse v0.0.0-20181024085210-fced451e0bed
