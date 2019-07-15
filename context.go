@@ -15,8 +15,8 @@ import (
 	"github.com/bingoohuang/properties"
 
 	"github.com/bingoohuang/gou"
-	"github.com/mitchellh/go-homedir"
-	"github.com/thoas/go-funk"
+	homedir "github.com/mitchellh/go-homedir"
+	funk "github.com/thoas/go-funk"
 )
 
 // Context defines the context of typhon client.
@@ -90,21 +90,19 @@ func (c *Context) SaveFileContents(fcs []FileContent, triggerListeners bool) *Cl
 	items := make([]ClientReportItem, 0)
 
 	c.cacheLock.Lock()
-	for _, fc := range fcs {
-		fc := fc
-		if old, ok := c.cache[fc.ConfFile]; ok {
-			if old.Content != fc.Content {
-				subs := old.conf.TriggerChange(old, &fc, time.Now(), triggerListeners)
-				if subs != nil {
-					items = append(items, subs...)
-				}
-				old.Content = fc.Content
-				old.Crc = fc.Crc
-				// Here will not replace old.ConfFile to avoiding registered listeners lost
-			}
-		} else {
+	for _, fcItem := range fcs {
+		fc := fcItem
+		if old, ok := c.cache[fc.ConfFile]; !ok {
 			fc.init()
 			c.cache[fc.ConfFile] = &fc
+		} else if old.Content != fc.Content {
+			subs := old.conf.TriggerChange(old, &fc, time.Now(), triggerListeners)
+			if subs != nil {
+				items = append(items, subs...)
+			}
+
+			// caution: DO NOT directly replace to avoiding registered listeners losing.
+			old.update(fc)
 		}
 	}
 	c.cacheLock.Unlock()

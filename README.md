@@ -35,7 +35,13 @@ typhon client for golang [![Go Report Card](https://goreportcard.com/badge/githu
 
     # 推送配置所需要的用户名密码
     # postAuth = admin:admin
-    postAuth = admin:admin
+
+    # 服务端证书校验用的根证书文件(不校验服务端证书时，请注释本配置项)
+    #rootPem = ./root.pem
+   
+    # 提供给服务端校验的客户端证书文件和客户端私钥文件（服务端不需要校验时，请注释两个配置项）
+    #clientPem = ./client.pem
+    #clientKey = ./client.key
     ```
 
 1. Use the api to access config

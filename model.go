@@ -18,6 +18,11 @@ func (f *FileContent) init() {
 	f.conf = NewConfFile(f.ConfFile, f.Content)
 }
 
+func (f *FileContent) update(u FileContent) {
+	f.Content = u.Content
+	f.Crc = u.Crc
+}
+
 // ConfFileChangeEvent structured the change event content.
 type ConfFileChangeEvent struct {
 	ConfFile       string    `json:"confFile"`
