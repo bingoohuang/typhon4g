@@ -14,3 +14,5 @@
 /demo/etc/snapshots
 /demo/typhon4g-demo
 .DS_Store
+*.pem
+*.key

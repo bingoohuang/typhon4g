@@ -3,7 +3,7 @@ module github.com/bingoohuang/typhon4g
 go 1.12
 
 require (
-	github.com/bingoohuang/gonet v0.0.0-20190712083947-7c8eaeb7cf96
+	github.com/bingoohuang/gonet v0.0.0-20190715120030-7c6fe96df4be
 	github.com/bingoohuang/goreflect v0.0.0-20190712052741-f9e6d0b5f7fd
 	github.com/bingoohuang/gou v0.0.0-20190712054827-f94fc6d5691b
 	github.com/bingoohuang/now v0.0.0-20190606004815-23593911de12

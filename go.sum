@@ -6,8 +6,9 @@ github.com/araddon/dateparse v0.0.0-20190510211750-d2ba70357e92/go.mod h1:SLqhdZ
 github.com/averagesecurityguy/random v0.0.0-20180326012618-37cce341d2af h1:P1psVDaUckBRYLjODu1JLr/ECxWPWwYrbEaa5g7IqSM=
 github.com/averagesecurityguy/random v0.0.0-20180326012618-37cce341d2af/go.mod h1:xlqW8P0gOqVMB8Kp0mMuUznEi1PzjF+mhHTSC+ymalU=
 github.com/bingoohuang/gonet v0.0.0-20190712054511-73959344cb66/go.mod h1:lSe5gMXAiQESg/xTshM6sByKvDkMGdDffZSXt0d64JI=
-github.com/bingoohuang/gonet v0.0.0-20190712083947-7c8eaeb7cf96 h1:L43ys+HLAr4cfKA0EFI3CWLfnaDbtxrTRT2hxfFdx2E=
-github.com/bingoohuang/gonet v0.0.0-20190712083947-7c8eaeb7cf96/go.mod h1:lSe5gMXAiQESg/xTshM6sByKvDkMGdDffZSXt0d64JI=
+github.com/bingoohuang/gonet v0.0.0-20190715112036-607437f872ab/go.mod h1:lSe5gMXAiQESg/xTshM6sByKvDkMGdDffZSXt0d64JI=
+github.com/bingoohuang/gonet v0.0.0-20190715120030-7c6fe96df4be h1:eEGfGR/AbQzt4vdUI20nZWMKgA7v1c+pEsA+0Ar84oI=
+github.com/bingoohuang/gonet v0.0.0-20190715120030-7c6fe96df4be/go.mod h1:lSe5gMXAiQESg/xTshM6sByKvDkMGdDffZSXt0d64JI=
 github.com/bingoohuang/goreflect v0.0.0-20190712052741-f9e6d0b5f7fd h1:horohKpjOxu/ZiHUzDhMbfoUgthbXoiCEI2SvWkOVL4=
 github.com/bingoohuang/goreflect v0.0.0-20190712052741-f9e6d0b5f7fd/go.mod h1:rga5AtVf7Npiv04XZxTsd8LC4/VyEHr+sn4Vt1jWPNE=
 github.com/bingoohuang/gou v0.0.0-20190613073207-0620728072ee/go.mod h1:BZKc9X/YGhsL9dFvouK9KO1wkzKTPy1kS2XvdWoBRvg=

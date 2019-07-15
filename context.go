@@ -2,7 +2,6 @@ package typhon4g
 
 import (
 	"bytes"
-	"crypto/tls"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -51,7 +50,9 @@ type Context struct {
 	PostAuth string
 
 	ReqOption *gonet.ReqOption
-	ClientCrt string
+
+	RootPem   string
+	ClientPem string
 	ClientKey string
 }
 
@@ -170,7 +171,8 @@ func LoadContext(reader io.Reader) (*Context, error) {
 		MetaRefreshIntervalSeconds:   d.Int64Or("metaRefreshIntervalSeconds", 300),
 
 		PostAuth:  d.Str("postAuth"),
-		ClientCrt: d.Str("clientCrt"),
+		RootPem:   d.Str("rootPem"),
+		ClientPem: d.Str("clientPem"),
 		ClientKey: d.Str("clientKey"),
 	}
 
@@ -179,12 +181,7 @@ func LoadContext(reader io.Reader) (*Context, error) {
 	c.MetaServers = c.createMetaServers(d.StrOr("metaServers", "http://127.0.0.1:11683"))
 
 	c.ReqOption = gonet.NewReqOption()
-
-	if c.ClientCrt != "" && c.ClientKey != "" {
-		c.ReqOption.TLSClientConfig = gonet.MustCreateClientTLSConfig(c.ClientKey, c.ClientCrt)
-	} else {
-		c.ReqOption.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
-	}
+	c.ReqOption.TLSClientConfig = gonet.TLSConfigCreateClientMust(c.ClientKey, c.ClientPem, c.RootPem)
 
 	return c, nil
 }
