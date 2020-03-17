@@ -1,4 +1,4 @@
-package typhon4g
+package base
 
 // Prop defines the interface of properties.
 type Prop interface {

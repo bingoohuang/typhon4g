@@ -1,8 +1,8 @@
-package typhon4g
+package base
 
 // TxtConfFile defines the txt format of conf file
 type TxtConfFile struct {
-	BaseConf
+	Conf
 }
 
 // ConfFormat gets the format of conf file
@@ -12,7 +12,7 @@ func (t *TxtConfFile) ConfFormat() ConfFmt {
 
 // NewTxtConfFile new a TxtConfFile.
 func NewTxtConfFile(confFile, raw string) *TxtConfFile {
-	return &TxtConfFile{BaseConf{confFile: confFile, raw: raw,
-		listeners: make([]ConfFileChangeListener, 0),
+	return &TxtConfFile{Conf{confFile: confFile, raw: raw,
+		listeners: make([]ChangeListener, 0),
 	}}
 }

@@ -1,4 +1,4 @@
-package typhon4g
+package base
 
 // ConfFmt defines the conf file format.
 type ConfFmt int

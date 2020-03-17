@@ -1,11 +1,13 @@
-package typhon4g
+package base
 
 import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/bingoohuang/gou"
+	"github.com/bingoohuang/gou/enc"
+
 	"github.com/bingoohuang/now"
 	"github.com/sirupsen/logrus"
 )
@@ -16,28 +18,34 @@ type SnapshotService struct {
 }
 
 // Load loads the snapshot in file.
-func (s SnapshotService) Load(file string) (ConfFile, error) {
+func (s SnapshotService) Load(file string) error {
 	content, err := ioutil.ReadFile(filepath.Join(s.C.SnapshotsDir, file))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	raw := string(content)
-	fc := &FileContent{
-		AppID:    s.C.AppID,
-		ConfFile: file,
-		Content:  raw,
-		Crc:      gou.Checksum(content),
+	wait := make(chan bool)
+
+	s.C.FileRawChan <- FileRawWait{
+		Raw: FileRaw{
+			AppID:    s.C.AppID,
+			ConfFile: file,
+			Content:  string(content),
+			Crc:      enc.Checksum(content),
+		},
+		Wait: wait,
 	}
 
-	s.C.RecoverFileContent(fc)
-	return fc.conf, nil
+	<-wait
+
+	return nil
 }
 
 // Save saves the confFile and its content to snapshot.
 func (s SnapshotService) Save(confFile, content string) {
 	cf := filepath.Join(s.C.SnapshotsDir, confFile)
 	err := ioutil.WriteFile(cf, []byte(content), 0644)
+
 	if err != nil {
 		logrus.Warnf("fail to write SnapshotService %s error %v", confFile, err)
 	}
@@ -47,6 +55,7 @@ func (s SnapshotService) Save(confFile, content string) {
 func (s SnapshotService) LoadMeta() string {
 	confFile := filepath.Join(s.C.SnapshotsDir, "_meta")
 	meta, err := ioutil.ReadFile(confFile)
+
 	if err != nil {
 		logrus.Warnf("fail to read SnapshotService %s error %v", confFile, err)
 		return ""
@@ -56,8 +65,8 @@ func (s SnapshotService) LoadMeta() string {
 }
 
 // SaveMeta saves the meta to snapshot.
-func (s SnapshotService) SaveMeta(configServerUrls string) {
-	s.Save("_meta", configServerUrls)
+func (s SnapshotService) SaveMeta(configServerUrls []string) {
+	s.Save("_meta", strings.Join(configServerUrls, ","))
 }
 
 // SaveUpdates saves the updates to snapshot.
@@ -67,12 +76,10 @@ func (s SnapshotService) SaveUpdates(fcs []FileContent) {
 	}
 }
 
-const DeletedAt = ".deletedAt."
-
-// SaveUpdates saves the updates to snapshot.
+// Clear clears the snapshot of confFile.
 func (s SnapshotService) Clear(confFile string) error {
 	from := filepath.Join(s.C.SnapshotsDir, confFile)
-	to := filepath.Join(s.C.SnapshotsDir, confFile+DeletedAt+now.MakeNow().P)
+	to := filepath.Join(s.C.SnapshotsDir, confFile+".deletedAt."+now.MakeNow().P)
 
 	return os.Rename(from, to)
 }

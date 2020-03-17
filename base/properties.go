@@ -1,4 +1,4 @@
-package typhon4g
+package base
 
 import (
 	"github.com/bingoohuang/properties"
@@ -7,7 +7,7 @@ import (
 
 // PropertiesConfFile defines the properties format of conf file
 type PropertiesConfFile struct {
-	BaseConf
+	Conf
 	Doc *properties.Doc
 }
 
@@ -22,8 +22,8 @@ func NewPropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 	}
 
 	pcf := &PropertiesConfFile{
-		BaseConf: BaseConf{raw: raw, confFile: confFile, listeners: make([]ConfFileChangeListener, 0)},
-		Doc:      doc}
+		Conf: Conf{raw: raw, confFile: confFile, listeners: make([]ChangeListener, 0)},
+		Doc:  doc}
 
 	pcf.updater = func(updated string) {
 		if doc, err := properties.LoadString(updated); err != nil {

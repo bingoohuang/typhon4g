@@ -1,4 +1,4 @@
-package typhon4g
+package base
 
 import (
 	"sync"
@@ -7,18 +7,18 @@ import (
 	"github.com/bingoohuang/now"
 )
 
-// BaseConf defines the base structure of conf file
-type BaseConf struct {
+// Conf defines the base structure of conf file
+type Conf struct {
 	raw       string
 	confFile  string
-	listeners []ConfFileChangeListener
+	listeners []ChangeListener
 
 	rawLock sync.RWMutex
 	updater func(updated string)
 }
 
 // Raw gets the raw content of conf file
-func (b *BaseConf) Raw() string {
+func (b *Conf) Raw() string {
 	b.rawLock.RLock()
 	defer b.rawLock.RUnlock()
 
@@ -26,7 +26,7 @@ func (b *BaseConf) Raw() string {
 }
 
 // UpdateRaw update the raw content of conf file
-func (b *BaseConf) UpdateRaw(updated string) {
+func (b *Conf) UpdateRaw(updated string) {
 	b.rawLock.Lock()
 	defer b.rawLock.Unlock()
 
@@ -37,19 +37,20 @@ func (b *BaseConf) UpdateRaw(updated string) {
 }
 
 // Name gets the name of conf file
-func (b *BaseConf) Name() string {
+func (b *Conf) Name() string {
 	return b.confFile
 }
 
 // Register registers the change listener of conf file
-func (b *BaseConf) Register(listener ConfFileChangeListener) {
+func (b *Conf) Register(listener ChangeListener) {
 	b.listeners = append(b.listeners, listener)
 }
 
 // Unregister removes the register of the change listener of conf file
-func (b *BaseConf) Unregister(listener ConfFileChangeListener) int {
-	ls := make([]ConfFileChangeListener, 0, len(b.listeners))
+func (b *Conf) Unregister(listener ChangeListener) int {
+	ls := make([]ChangeListener, 0, len(b.listeners))
 	count := 0
+
 	for _, l := range b.listeners {
 		if l != listener {
 			ls = append(ls, l)
@@ -59,23 +60,23 @@ func (b *BaseConf) Unregister(listener ConfFileChangeListener) int {
 	}
 
 	b.listeners = ls
+
 	return count
 }
 
 // UnregisterAll  removes all registers of the change listener of conf file
-func (b *BaseConf) UnregisterAll() {
+func (b *Conf) UnregisterAll() {
 	b.listeners = b.listeners[0:0]
 }
 
 // TriggerChange trigger the changes event
-func (b *BaseConf) TriggerChange(old, new *FileContent,
-	changedTime time.Time, triggerListeners bool) []ClientReportItem {
-
+func (b *Conf) TriggerChange(old, new FileRaw, changedTime time.Time) []ClientReportItem {
 	oldRaw := b.Raw()
 	b.UpdateRaw(new.Content)
+
 	items := make([]ClientReportItem, 0)
 
-	if !triggerListeners {
+	if !new.TriggerChange {
 		return items
 	}
 

@@ -1,4 +1,4 @@
-package typhon4g
+package base
 
 import (
 	"path/filepath"
@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// ConfFileChangeListener defines the interface for change listener
-type ConfFileChangeListener interface {
+// ChangeListener defines the interface for change listener
+type ChangeListener interface {
 	OnChange(event ConfFileChangeEvent) (string, bool)
 }
 
@@ -21,19 +21,20 @@ type ConfFile interface {
 	Name() string
 
 	// Register registers the change listener of conf file
-	Register(ConfFileChangeListener)
+	Register(ChangeListener)
 	// Unregister removes the register of the change listener of conf file
-	Unregister(ConfFileChangeListener) int
-	// UnregisterAll  removes all registers of the change listener of conf file
+	Unregister(ChangeListener) int
+	// UnregisterAll removes all registers of the change listener of conf file
 	UnregisterAll()
 
 	// TriggerChange trigger the changes event
-	TriggerChange(old, new *FileContent, changedTime time.Time, triggerListeners bool) []ClientReportItem
+	TriggerChange(old, new FileRaw, changedTime time.Time) []ClientReportItem
 }
 
 // NewConfFile creates a ConfFile interface by confFile and raw content.
 func NewConfFile(confFile, raw string) ConfFile {
 	ext := strings.ToLower(filepath.Ext(confFile))
+
 	switch ext {
 	case ".properties":
 		return NewPropertiesConfFile(confFile, raw)

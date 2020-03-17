@@ -1,3 +1,4 @@
+// nolint gomnd
 package main
 
 import (
@@ -6,19 +7,23 @@ import (
 	"os"
 	"strings"
 
+	"github.com/bingoohuang/gou/enc"
+	"github.com/bingoohuang/gou/ran"
+	"github.com/bingoohuang/typhon4g/base"
+
 	"github.com/bingoohuang/properties"
 
-	"github.com/bingoohuang/gou"
 	"github.com/bingoohuang/typhon4g"
 	"github.com/sirupsen/logrus"
 )
 
-type MyListener struct{}
+type myListener struct{}
 
-// Make sure that MyListener implements the interface typhon4g.ConfFileChangeListener
-var _ typhon4g.ConfFileChangeListener = (*MyListener)(nil)
+// Make sure that myListener implements the interface typhon4g.ChangeListener
+var _ base.ChangeListener = (*myListener)(nil)
 
-func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok bool) {
+// OnChange defines the callback when changes detected.
+func (l myListener) OnChange(event base.ConfFileChangeEvent) (msg string, ok bool) {
 	fmt.Printf("OnChange: %+v\n", event)
 	// eat your own dog food here
 	old, _ := properties.LoadString(event.Old)
@@ -28,36 +33,36 @@ func (l MyListener) OnChange(event typhon4g.ConfFileChangeEvent) (msg string, ok
 		fmt.Println(e)
 	})
 
-	return "my message:" + gou.RandString(10), true /*  true to means changed OK */
+	return "my message:" + ran.String(10), true /*  true to means changed OK */
 }
 
 func main() {
-	ty := typhon4g.MustLoadStart()
+	ty := typhon4g.LoadStart()
 	var err error
-	prop, err := ty.Properties("hello.properties")
+	prop, err := ty.Properties("application.properties")
 	if err != nil {
 		logrus.Panic(err)
 	}
 
 	propContent, _ := properties.LoadString(prop.Raw())
 	propContent.Set("Key", "Value")
-	newContent := propContent.String()
-	_, _ = ty.PostConf("hello.properties", newContent, "all")
+	//newContent := propContent.String()
+	//_, _ = ty.PostConf("hello.properties", newContent, "all")
 
 	fmt.Println(prop.Doc.Map())
 
-	hello, err := ty.ConfFile("hello.json")
-	if err != nil {
-		logrus.Panic(err)
-	}
-	fmt.Println("hello.json:", hello.Raw())
+	//hello, err := ty.ConfFile("hello.json")
+	//if err != nil {
+	//	logrus.Panic(err)
+	//}
+	//fmt.Println("hello.json:", hello.Raw())
 
-	var listener MyListener
+	var listener myListener
 	prop.Register(&listener)
 
 	var crc string
 
-	enter := "Enter get/put/his(hello.properties): "
+	enter := "Enter get/put/his(application.properties): "
 	fmt.Print(enter)
 
 	snr := bufio.NewScanner(os.Stdin)
@@ -76,23 +81,23 @@ func main() {
 		//	cmd := "put"
 		switch cmd {
 		case "put":
-			content := "name=" + gou.RandString(10) + "\nage=" + gou.RandomNum(3) + "\n"
+			content := "name=" + ran.String(10) + "\nage=" + ran.Num(3) + "\n"
 			fmt.Println("putting:", content)
-			crc, err = ty.PostConf("hello.properties", content, "all")
+			crc, err = ty.PostConf("application.properties", content, "all")
 			if err != nil {
 				logrus.Panicf("error %v", err)
 			}
 			fmt.Println("crc:", crc)
 		case "his":
-			items, err := ty.ListenerResults("hello.properties", crc)
+			items, err := ty.ListenerResults("application.properties", crc)
 			if err != nil {
 				logrus.Panicf("error %v", err)
 			}
 
-			his := gou.PrettyJsontify(items)
+			his := enc.JSONPretty(items)
 			fmt.Println("items:\n", his)
 		case "get":
-			hello, err := ty.ConfFile("hello.properties")
+			hello, err := ty.ConfFile("application.properties")
 			if err != nil {
 				fmt.Println(err)
 			} else {

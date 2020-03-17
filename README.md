@@ -1,37 +1,48 @@
 # typhon4g
 typhon client for golang [![Go Report Card](https://goreportcard.com/badge/github.com/bingoohuang/typhon4g)](https://goreportcard.com/report/github.com/bingoohuang/typhon4g)
 
-# Usage
+## Usage
 
 1. Setup `$PWD/etc/typhon-context.properties` like the following:
  
     ```properties
     # 应用程序id
-    appID = a100
+    appId = a100
+
+    # 配置中心服务器类型: apollo, typhon, 默认typhon
+	serverType = apollo
+
+	
+	# 以下是apollo专有
+	cluster    = default
+	dataCenter = 
+	localIp    =
     
-    # Meta服务器地址列表，多个时以英文逗号分隔，默认http://127.0.0.1:11683
+    # Meta服务器地址列表，多个时以英文逗号分隔
     metaServers = http://127.0.0.1:11683
-    # 配置刷新时间间隔（秒），默认300
-    configRefreshIntervalSeconds = 300
-    # 配置刷新是读取超时时间（毫秒），默认5000
-    # configReadTimeoutMillis = 5000
-    # Http连接超时时间（毫秒），默认1000
-    # connectTimeoutMillis = 1000
-    # 长连接保持时间（毫秒），默认70000，服务器端是一分钟 （60000），这里配置比服务器端多一点点即可
-    # pollingReadTimeoutMillis = 70000
+    # 配置服务器列表（如果meta不填，则需要填写此项）
+    configServers = 
+    # 配置刷新时间间隔，默认5分钟
+    configRefreshInterval = 5m
+    # 配置刷新是读取超时时间，默认5s
+    # configReadTimeout = 5s
+    # Http连接超时时间，默认1秒
+    # connectTimeout = 1s
+    # 长连接保持时间，默认70秒，服务器端是一分钟，这里配置比服务器端多一点点即可
+    # pollingReadTimeout = 70s
     
     # 快照存储目录，不配置时，默认 ~/.typhon-client/snapshots
     # snapshotsDir = ~/.typhon-client/snapshots
     snapshotsDir = ./etc/snapshots
     
     # meta server/config server连接不上时，等待重试的时间，默认60秒
-    # retryNetworkSleepSeconds = 60
+    # retryNetworkSleep = 60s
     
-    # 配置主动刷新时间间隔，默认300秒 （5分钟）
-    # configRefreshIntervalSeconds = 300
+    # 配置主动刷新时间间隔，默认5分钟
+    # configRefreshInterval = 5m
     
-    # Meta主动刷新时间间隔，默认300秒（5分钟）
-    # metaRefreshIntervalSeconds = 300
+    # Meta主动刷新时间间隔，默认5分钟
+    # metaRefreshInterval = 5m
 
     # 推送配置所需要的用户名密码
     # postAuth = admin:admin
@@ -106,3 +117,5 @@ typhon client for golang [![Go Report Card](https://goreportcard.com/badge/githu
 	fmt.Println("items", items)
     
     ```
+
+## Apollo support
