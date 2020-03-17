@@ -14,7 +14,7 @@ type MetaRsp struct {
 
 // Client defines the typhon client.
 type Client struct {
-	C       *base.Context
+	*base.Context
 	fileRaw chan base.FileRawWait
 }
 
@@ -22,7 +22,7 @@ type Client struct {
 func (c *Client) MetaGet(addr string) ([]string, error) {
 	var rsp MetaRsp
 
-	if err := c.C.Req.RestGet(addr, &rsp); err != nil {
+	if err := c.Req.RestGet(addr, &rsp); err != nil {
 		return nil, err
 	}
 
@@ -32,7 +32,7 @@ func (c *Client) MetaGet(addr string) ([]string, error) {
 // MakeClient makes a apollo client.
 func MakeClient(c *base.Context, fileRaw chan base.FileRawWait) *Client {
 	return &Client{
-		C:       c,
+		Context: c,
 		fileRaw: fileRaw,
 	}
 }

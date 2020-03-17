@@ -38,14 +38,14 @@ func (c *Client) ReadConfig(namespace string, wait bool) <-chan bool {
 func (c *Client) readConfig(namespace string, wait chan bool) {
 	releaseKey, _ := c.releaseKeys.LoadOrStore(namespace, "")
 
-	servers := c.C.GetConfigServers()
+	servers := c.GetConfigServers()
 	gor.IterateSlice(servers, -1, func(addr string) bool {
 		configAddr := c.configAddr(addr, namespace, releaseKey.(string))
 
 		logrus.Infof("config address %s", configAddr)
 
 		var result configResult
-		if err := c.C.Req.RestGet(configAddr, &result); err != nil {
+		if err := c.Req.RestGet(configAddr, &result); err != nil {
 			return false
 		}
 
@@ -55,7 +55,7 @@ func (c *Client) readConfig(namespace string, wait chan bool) {
 
 		c.fileRaw <- base.FileRawWait{
 			FileRaw: base.FileRaw{
-				AppID:    c.C.AppID,
+				AppID:    c.AppID,
 				ConfFile: namespace,
 				Content:  props.String(),
 				Crc:      "",
@@ -70,8 +70,8 @@ func (c *Client) readConfig(namespace string, wait chan bool) {
 func (c *Client) configAddr(addr, namespace, releaseKey string) string {
 	return fmt.Sprintf("%s/configs/%s/%s/%s?releaseKey=%s&ip=%s",
 		base.HTPPAddr(addr),
-		url.QueryEscape(c.C.AppID),
-		url.QueryEscape(c.C.Cluster),
+		url.QueryEscape(c.AppID),
+		url.QueryEscape(c.Cluster),
 		url.QueryEscape(namespace),
 		releaseKey,
 		c.localIP)

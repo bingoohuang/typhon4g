@@ -9,14 +9,14 @@ import (
 // CreateMetaServers creates the meta servers addresses.
 func (c *Client) CreateMetaServers() []string {
 	f := func(meta string) string { return base.HTPPAddr(meta) + "/services/config" }
-	return funk.Map(str.SplitN(c.C.MetaServers, ",", true, true), f).([]string)
+	return funk.Map(str.SplitN(c.MetaServers, ",", true, true), f).([]string)
 }
 
 // MetaGet gets the config servers address from the meta server.
 func (c *Client) MetaGet(url string) ([]string, error) {
 	var metaRsps []MetaRsp
 
-	if err := c.C.Req.RestGet(url, &metaRsps); err != nil {
+	if err := c.Req.RestGet(url, &metaRsps); err != nil {
 		return nil, err
 	}
 

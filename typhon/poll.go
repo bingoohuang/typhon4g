@@ -8,5 +8,5 @@ func (c *Client) Polling(addr string) error {
 }
 
 func (c *Client) pollingAddr(addr string) string {
-	return addr + "/client/notify/" + c.C.AppID
+	return addr + "/client/notify/" + c.AppID
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Client) createConfigServer(addr string) string {
-	return addr + "/client/config/" + c.C.AppID
+	return addr + "/client/config/" + c.AppID
 }
 
 // ReadConfig tries to refresh conf defined by confFile or all (confFile is empty).
@@ -21,7 +21,7 @@ func (c *Client) ReadConfig(confFile string, wait bool) <-chan bool {
 		waitCh = make(chan bool)
 	}
 
-	gor.IterateSlice(c.C.ConfigServersParsed, -1, func(addr string) bool {
+	gor.IterateSlice(c.ConfigServersParsed, -1, func(addr string) bool {
 		configAddr := c.createConfigServer(addr)
 		return c.readConfig(configAddr, confFile, waitCh, false) == nil
 	})
@@ -44,11 +44,13 @@ func (c *Client) readConfig(url, confFile string, wait chan bool, isPoll bool) e
 
 	clientURL := url + "?confFileCrc=" + confFileCrc
 
+	logrus.Debugf("config url %s", clientURL)
+
 	var rsp configRsp
 
-	req := c.C.Req
+	req := c.Req
 	if isPoll {
-		req = c.C.ReqPoll
+		req = c.ReqPoll
 	}
 
 	err := req.RestGet(clientURL, &rsp)
@@ -64,6 +66,16 @@ func (c *Client) readConfig(url, confFile string, wait chan bool, isPoll bool) e
 	}
 
 	if len(rsp.Data) == 0 {
+		c.fileRaw <- base.FileRawWait{
+			FileRaw: base.FileRaw{
+				AppID:    c.AppID,
+				ConfFile: confFile,
+				Content:  "",
+				Crc:      "",
+			},
+			Wait: wait,
+		}
+
 		return nil
 	}
 
@@ -89,7 +101,7 @@ func (c *Client) createConfFileCrcs(confFile string) string {
 func (c *Client) CreateConfFileCrcs() string {
 	confFileCrc := make([]string, 0)
 
-	c.C.WalkFileContents(func(cf string, fc *base.FileContent) {
+	c.WalkFileContents(func(cf string, fc *base.FileContent) {
 		confFileCrc = append(confFileCrc, fc.ConfFile+":"+fc.Crc)
 	})
 

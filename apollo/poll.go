@@ -34,7 +34,7 @@ func (c *Client) Polling(configServer string) error {
 
 	var rsp []notification
 
-	if err := c.C.ReqPoll.RestGet(pollingAddr, &rsp); err != nil {
+	if err := c.ReqPoll.RestGet(pollingAddr, &rsp); err != nil {
 		if os.IsTimeout(err) {
 			logrus.Infof("normal polling timeout %s", pollingAddr)
 			return nil
@@ -77,9 +77,9 @@ func (c *Client) pollingAddr(configServer string, notifications []notification) 
 
 	return fmt.Sprintf("%s/notifications/v2?appId=%s&cluster=%s&dataCenter=%s&notifications=%s&ip=%s",
 		base.HTPPAddr(configServer),
-		url.QueryEscape(c.C.AppID),
-		url.QueryEscape(c.C.Cluster),
-		url.QueryEscape(c.C.DataCenter),
+		url.QueryEscape(c.AppID),
+		url.QueryEscape(c.Cluster),
+		url.QueryEscape(c.DataCenter),
 		url.QueryEscape(json),
 		url.QueryEscape(c.localIP),
 	)

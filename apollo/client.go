@@ -10,7 +10,7 @@ import (
 // Client defines the apollo client.
 type Client struct {
 	localIP string
-	C       *base.Context
+	*base.Context
 	fileRaw chan base.FileRawWait
 
 	notifications sync.Map
@@ -25,7 +25,7 @@ func MakeClient(c *base.Context, fileRaw chan base.FileRawWait) *Client {
 	}
 
 	return &Client{
-		C:       c,
+		Context: c,
 		localIP: localIP,
 		fileRaw: fileRaw,
 	}

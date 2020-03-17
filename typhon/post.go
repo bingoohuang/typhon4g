@@ -46,15 +46,15 @@ type PostRsp struct {
 
 // UploadReport uploads the listeners reports.
 func (c *Client) UploadReport(report *ClientReport) {
-	_, _ = gor.IterateSlice(c.C.ConfigServers, -1, func(url string) bool {
+	_, _ = gor.IterateSlice(c.ConfigServers, -1, func(url string) bool {
 		return c.TryUploadReport(url, report)
 	})
 }
 
 // basicAuth adds basic auth the the http request.
 func (c *Client) basicAuth(r *gonet.HTTPReq) {
-	if c.C.PostAuth != "" {
-		usr, pas := str.Split2(c.C.PostAuth, ":", true, false)
+	if c.PostAuth != "" {
+		usr, pas := str.Split2(c.PostAuth, ":", true, false)
 		r.BasicAuth(usr, pas)
 	}
 }
@@ -64,7 +64,7 @@ func (c *Client) TryUploadReport(url string, report *ClientReport) bool {
 	var rsp RspHead
 
 	reportURL := strings.Replace(url, "/client/config/", "/admin/report/", 1)
-	rspBody, err := c.C.Req.RestPostFn(reportURL, report, &rsp, c.basicAuth)
+	rspBody, err := c.Req.RestPostFn(reportURL, report, &rsp, c.basicAuth)
 	logrus.Infof("report response %s, error %v", string(rspBody), err)
 
 	return rsp.Status == 200
@@ -73,14 +73,14 @@ func (c *Client) TryUploadReport(url string, report *ClientReport) bool {
 // PostConf posts the conf to the server with clientIps (blank/comma separated IP addresses or all)
 // returns crc and error info.
 func (c *Client) PostConf(confFile, raw, clientIps string) (string, error) {
-	ok, res := gor.IterateSlice(c.C.ConfigServersParsed, -1, func(addr string) (bool, interface{}) {
+	ok, res := gor.IterateSlice(c.ConfigServersParsed, -1, func(addr string) (bool, interface{}) {
 		return c.TryPost(addr, confFile, raw, clientIps)
 	})
 
 	if ok && res != nil {
 		c.fileRaw <- base.FileRawWait{
 			FileRaw: base.FileRaw{
-				AppID:    c.C.AppID,
+				AppID:    c.AppID,
 				ConfFile: confFile,
 				Content:  raw,
 				Crc:      enc.Checksum([]byte(raw)),
@@ -100,14 +100,14 @@ func (c *Client) TryPost(addr, confFile, raw, clientIps string) (bool, interface
 
 	var rsp PostRsp
 
-	_, _ = c.C.Req.RestPostFn(postURL, ReqBody{Data: raw}, &rsp, c.basicAuth)
+	_, _ = c.Req.RestPostFn(postURL, ReqBody{Data: raw}, &rsp, c.basicAuth)
 
 	return rsp.Status == 200, rsp.Crc
 }
 
 // ListenerResults gets the listener results from the server.
 func (c *Client) ListenerResults(confFile, crc string) ([]base.ClientReportRspItem, error) {
-	if ok, res := gor.IterateSlice(c.C.ConfigServers, -1, func(url string) (bool, interface{}) {
+	if ok, res := gor.IterateSlice(c.ConfigServers, -1, func(url string) (bool, interface{}) {
 		return c.tryListenerResults(url, confFile, crc)
 	}); ok {
 		return res.([]base.ClientReportRspItem), nil
@@ -121,7 +121,7 @@ func (c *Client) tryListenerResults(url, confFile, crc string) (bool, interface{
 	reportURL := strings.Replace(url, "/config/", "/report/", 1) + "?confFile=" + confFile + "&crc=" + crc
 
 	var rsp ClientReportRsp
-	err := c.C.Req.RestGet(reportURL, &rsp)
+	err := c.Req.RestGet(reportURL, &rsp)
 
 	if err != nil || rsp.Status != 200 {
 		logrus.Warnf("fail to TryListenerResults %s, error %v", reportURL, err)
