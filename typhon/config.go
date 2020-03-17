@@ -14,15 +14,19 @@ func (c *Client) createConfigServer(addr string) string {
 }
 
 // ReadConfig tries to refresh conf defined by confFile or all (confFile is empty).
-func (c *Client) ReadConfig(confFile string) <-chan bool {
-	wait := make(chan bool)
+func (c *Client) ReadConfig(confFile string, wait bool) <-chan bool {
+	var waitCh chan bool
+
+	if wait {
+		waitCh = make(chan bool)
+	}
 
 	gor.IterateSlice(c.C.ConfigServersParsed, -1, func(addr string) bool {
 		configAddr := c.createConfigServer(addr)
-		return c.readConfig(configAddr, confFile, wait, false) == nil
+		return c.readConfig(configAddr, confFile, waitCh, false) == nil
 	})
 
-	return wait
+	return waitCh
 }
 
 type configRsp struct {
@@ -64,11 +68,9 @@ func (c *Client) readConfig(url, confFile string, wait chan bool, isPoll bool) e
 	}
 
 	for _, item := range rsp.Data {
-		item.TriggerChange = true
-
 		c.fileRaw <- base.FileRawWait{
-			Raw:  item,
-			Wait: wait,
+			FileRaw: item,
+			Wait:    wait,
 		}
 	}
 

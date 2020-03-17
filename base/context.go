@@ -13,7 +13,7 @@ type configClient interface {
 	// MetaGet gets the config servers address from the meta server.
 	MetaGet(url string) ([]string, error)
 	Polling(configServer string) error
-	ReadConfig(confFile string) <-chan bool
+	ReadConfig(confFile string, wait bool) <-chan bool
 
 	// PostConf posts the conf to the server with clientIps(blank/comma separated or all)
 	// returns crc and error.
@@ -121,35 +121,6 @@ func (c *Context) LoadConfCache(confFile string) *FileContent {
 	}
 
 	return nil
-}
-
-// ConsumeChan consumes the updating config changes from the channel.
-func (c *Context) ConsumeChan() {
-	for raw := range c.FileRawChan {
-		c.updateCache(raw)
-	}
-}
-
-func (c *Context) updateCache(raw FileRawWait) {
-	c.cacheLock.Lock()
-	defer c.cacheLock.Unlock()
-
-	fc := FileContent{
-		FileRaw: raw.Raw,
-	}
-
-	if old, ok := c.Cache[raw.Raw.ConfFile]; !ok {
-		fc.init()
-		c.Cache[raw.Raw.ConfFile] = &fc
-	} else if old.FileRaw.Content != raw.Raw.Content {
-		fc.conf = old.conf
-		fc.conf.TriggerChange(old.FileRaw, raw.Raw, time.Now())
-		c.Cache[raw.Raw.ConfFile] = &fc
-	}
-
-	if raw.Wait != nil {
-		raw.Wait <- true
-	}
 }
 
 // WalkFileContents walks the cache.

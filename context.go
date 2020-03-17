@@ -69,8 +69,6 @@ func LoadContext(reader io.Reader) (*base.Context, error) {
 		c.Client = typhon.MakeClient(c, c.FileRawChan)
 	}
 
-	go c.ConsumeChan()
-
 	c.MetaServersParsed = c.Client.CreateMetaServers()
 	c.ConfigServersParsed = str.SplitN(c.ConfigServers, ",", true, true)
 

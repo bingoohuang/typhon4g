@@ -3,7 +3,6 @@ package base
 import (
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 // ChangeListener defines the interface for change listener
@@ -19,16 +18,8 @@ type ConfFile interface {
 	ConfFormat() ConfFmt
 	// Name gets the name of conf file
 	Name() string
-
-	// Register registers the change listener of conf file
-	Register(ChangeListener)
-	// Unregister removes the register of the change listener of conf file
-	Unregister(ChangeListener) int
-	// UnregisterAll removes all registers of the change listener of conf file
-	UnregisterAll()
-
-	// TriggerChange trigger the changes event
-	TriggerChange(old, new FileRaw, changedTime time.Time) []ClientReportItem
+	// UpdateRaw update the raw content of conf file
+	UpdateRaw(updated string)
 }
 
 // NewConfFile creates a ConfFile interface by confFile and raw content.

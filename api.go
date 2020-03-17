@@ -44,11 +44,11 @@ func LoadStartByFileE(typhonContextFile string) (*base.Runner, error) {
 // LoadStartByContext load the runner from the context.
 func LoadStartByContext(context *base.Context) *base.Runner {
 	r := &base.Runner{
-		C:               context,
-		SnapshotService: &base.SnapshotService{C: context},
-		MetaService:     &base.MetaService{C: context},
-		ConfigService:   &base.ConfigService{C: context},
-		PollingService:  &base.PollingService{C: context},
+		Context:         context,
+		SnapshotService: &base.SnapshotService{Context: context},
+		MetaService:     &base.MetaService{Context: context},
+		ConfigService:   &base.ConfigService{Context: context},
+		PollingService:  &base.PollingService{Context: context},
 	}
 
 	r.Start()

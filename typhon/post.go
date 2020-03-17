@@ -79,7 +79,7 @@ func (c *Client) PostConf(confFile, raw, clientIps string) (string, error) {
 
 	if ok && res != nil {
 		c.fileRaw <- base.FileRawWait{
-			Raw: base.FileRaw{
+			FileRaw: base.FileRaw{
 				AppID:    c.C.AppID,
 				ConfFile: confFile,
 				Content:  raw,

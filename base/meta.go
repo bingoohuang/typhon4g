@@ -11,17 +11,17 @@ import (
 
 // MetaService defines the meta refreshing service.
 type MetaService struct {
-	C                    *Context
+	*Context
 	ConfigServersUpdater func(addr []string)
 }
 
 // Start starts the meta refreshing loop
 func (m MetaService) Start(ctx context.Context) {
-	if len(m.C.MetaServersParsed) == 0 { // 没有配置metaServers
+	if len(m.MetaServersParsed) == 0 { // 没有配置metaServers
 		return
 	}
 
-	timer := time.NewTimer(m.C.MetaRefreshInterval)
+	timer := time.NewTimer(m.MetaRefreshInterval)
 	defer timer.Stop()
 
 	for {
@@ -36,14 +36,14 @@ func (m MetaService) Start(ctx context.Context) {
 
 // Try try to refresh meta.
 func (m MetaService) Try() {
-	gor.IterateSlice(m.C.MetaServersParsed, -1, func(url string) bool {
-		configServers, err := m.C.Client.MetaGet(url)
+	gor.IterateSlice(m.MetaServersParsed, -1, func(url string) bool {
+		configServers, err := m.Client.MetaGet(url)
 		if err != nil {
 			logrus.Warnf("fail to MetaGet %v", err)
 			return false
 		}
 
-		if m.C.UpdateConfigServers(configServers) {
+		if m.UpdateConfigServers(configServers) {
 			m.ConfigServersUpdater(configServers)
 		}
 

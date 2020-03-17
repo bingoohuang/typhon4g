@@ -22,7 +22,7 @@ func NewPropertiesConfFile(confFile, raw string) *PropertiesConfFile {
 	}
 
 	pcf := &PropertiesConfFile{
-		Conf: Conf{raw: raw, confFile: confFile, listeners: make([]ChangeListener, 0)},
+		Conf: Conf{raw: raw, confFile: confFile},
 		Doc:  doc}
 
 	pcf.updater = func(updated string) {

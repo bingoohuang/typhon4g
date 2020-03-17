@@ -12,7 +12,5 @@ func (t *TxtConfFile) ConfFormat() ConfFmt {
 
 // NewTxtConfFile new a TxtConfFile.
 func NewTxtConfFile(confFile, raw string) *TxtConfFile {
-	return &TxtConfFile{Conf{confFile: confFile, raw: raw,
-		listeners: make([]ChangeListener, 0),
-	}}
+	return &TxtConfFile{Conf{confFile: confFile, raw: raw}}
 }

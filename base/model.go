@@ -6,8 +6,11 @@ import (
 
 // FileRawWait structured the config file content detail.
 type FileRawWait struct {
-	Raw  FileRaw
-	Wait chan bool
+	FileRaw
+
+	Wait                chan bool
+	TriggerChangeIgnore bool
+	SnapshotIgnore      bool
 }
 
 // FileRaw structured the config file content detail.
@@ -16,8 +19,6 @@ type FileRaw struct {
 	ConfFile string `json:"confFile"`
 	Content  string `json:"content"`
 	Crc      string `json:"crc"`
-
-	TriggerChange bool
 }
 
 // FileContent structured the config file content detail.

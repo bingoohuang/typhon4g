@@ -9,17 +9,17 @@ import (
 
 // PollingService defines the polling service.
 type PollingService struct {
-	C *Context
+	*Context
 }
 
 // Start starts the polling service loop.
 func (p PollingService) Start(ctx context.Context) {
-	d := p.C.RetryNetworkSleep
+	d := p.RetryNetworkSleep
 
 	for {
-		servers := p.C.GetConfigServers()
+		servers := p.GetConfigServers()
 		ok, _ := gor.IterateSlice(servers, -1, func(addr string) bool {
-			return p.C.Client.Polling(addr) == nil
+			return p.Client.Polling(addr) == nil
 		})
 
 		select {

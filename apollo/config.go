@@ -19,16 +19,20 @@ type configResult struct {
 }
 
 // ReadConfig reads the config related to namespace.
-func (c *Client) ReadConfig(namespace string) <-chan bool {
+func (c *Client) ReadConfig(namespace string, wait bool) <-chan bool {
 	if _, ok := c.notifications.Load(namespace); !ok {
 		c.notifications.Store(namespace, int64(0))
 	}
 
-	wait := make(chan bool)
+	var waitCh chan bool
 
-	c.readConfig(namespace, wait)
+	if wait {
+		waitCh = make(chan bool)
+	}
 
-	return wait
+	c.readConfig(namespace, waitCh)
+
+	return waitCh
 }
 
 func (c *Client) readConfig(namespace string, wait chan bool) {
@@ -50,12 +54,11 @@ func (c *Client) readConfig(namespace string, wait chan bool) {
 		c.releaseKeys.Store(namespace, result.ReleaseKey)
 
 		c.fileRaw <- base.FileRawWait{
-			Raw: base.FileRaw{
-				AppID:         c.C.AppID,
-				ConfFile:      namespace,
-				Content:       props.String(),
-				Crc:           "",
-				TriggerChange: true,
+			FileRaw: base.FileRaw{
+				AppID:    c.C.AppID,
+				ConfFile: namespace,
+				Content:  props.String(),
+				Crc:      "",
 			},
 			Wait: wait,
 		}

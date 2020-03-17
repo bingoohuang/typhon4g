@@ -14,26 +14,27 @@ import (
 
 // SnapshotService defines the snapshot service of typhon client
 type SnapshotService struct {
-	C *Context
+	*Context
 }
 
 // Load loads the snapshot in file.
 func (s SnapshotService) Load(file string) error {
-	content, err := ioutil.ReadFile(filepath.Join(s.C.SnapshotsDir, file))
+	content, err := ioutil.ReadFile(filepath.Join(s.SnapshotsDir, file))
 	if err != nil {
 		return err
 	}
 
 	wait := make(chan bool)
 
-	s.C.FileRawChan <- FileRawWait{
-		Raw: FileRaw{
-			AppID:    s.C.AppID,
+	s.FileRawChan <- FileRawWait{
+		FileRaw: FileRaw{
+			AppID:    s.AppID,
 			ConfFile: file,
 			Content:  string(content),
 			Crc:      enc.Checksum(content),
 		},
-		Wait: wait,
+		SnapshotIgnore: true,
+		Wait:           wait,
 	}
 
 	<-wait
@@ -43,7 +44,7 @@ func (s SnapshotService) Load(file string) error {
 
 // Save saves the confFile and its content to snapshot.
 func (s SnapshotService) Save(confFile, content string) {
-	cf := filepath.Join(s.C.SnapshotsDir, confFile)
+	cf := filepath.Join(s.SnapshotsDir, confFile)
 	err := ioutil.WriteFile(cf, []byte(content), 0644)
 
 	if err != nil {
@@ -53,7 +54,7 @@ func (s SnapshotService) Save(confFile, content string) {
 
 // LoadMeta loads meta from snapshot.
 func (s SnapshotService) LoadMeta() string {
-	confFile := filepath.Join(s.C.SnapshotsDir, "_meta")
+	confFile := filepath.Join(s.SnapshotsDir, "_meta")
 	meta, err := ioutil.ReadFile(confFile)
 
 	if err != nil {
@@ -78,8 +79,8 @@ func (s SnapshotService) SaveUpdates(fcs []FileContent) {
 
 // Clear clears the snapshot of confFile.
 func (s SnapshotService) Clear(confFile string) error {
-	from := filepath.Join(s.C.SnapshotsDir, confFile)
-	to := filepath.Join(s.C.SnapshotsDir, confFile+".deletedAt."+now.MakeNow().P)
+	from := filepath.Join(s.SnapshotsDir, confFile)
+	to := filepath.Join(s.SnapshotsDir, confFile+".deletedAt."+now.MakeNow().P)
 
 	return os.Rename(from, to)
 }

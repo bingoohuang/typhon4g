@@ -2,6 +2,7 @@ package apollo
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -24,7 +25,7 @@ func (c *Client) Polling(configServer string) error {
 	notifications, filenameNamespaceMap := c.makeNotifications()
 	if len(notifications) == 0 {
 		logrus.Infof("nothing to polling")
-		return nil
+		return errors.New("nothing to polling")
 	}
 
 	pollingAddr := c.pollingAddr(configServer, notifications)
