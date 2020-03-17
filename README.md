@@ -17,6 +17,7 @@ serverType = apollo
 # 以下是apollo专有
 cluster    = default
 dataCenter = 
+# localIp不配置的话，默认获取en0/eth0网卡的v4版本的IP地址
 localIp    =
 
 # Meta服务器地址列表，多个时以英文逗号分隔
