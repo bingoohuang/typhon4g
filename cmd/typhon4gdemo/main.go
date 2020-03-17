@@ -14,10 +14,8 @@ import (
 	"github.com/bingoohuang/typhon4g"
 )
 
-var ty = typhon4g.LoadStart()
-
 func init() {
-	ty.Register("application.properties", &typhon4g.ViperListener{})
+	typhon4g.LoadStart().Register("application.properties", &typhon4g.ViperListener{})
 }
 
 func main() {

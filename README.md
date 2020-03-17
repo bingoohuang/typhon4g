@@ -22,7 +22,7 @@ localIp    =
 
 # Meta服务器地址列表，多个时以英文逗号分隔
 metaServers = http://127.0.0.1:11683
-# 配置服务器列表（如果meta不填，则需要填写此项）
+# 配置服务器列表，多个时以英文逗号分隔（如果meta不填，则需要填写此项）
 configServers = 
 # 配置刷新时间间隔，默认5分钟
 configRefreshInterval = 5m
@@ -68,10 +68,9 @@ import (
 	"github.com/bingoohuang/typhon4g"
 )
  
-var ty = typhon4g.LoadStart()
-
 func init() {
     // 注册viper读取
+    ty := typhon4g.LoadStart()
 	ty.Register("application.properties", &typhon4g.ViperListener{})
 }
 

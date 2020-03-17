@@ -97,7 +97,7 @@ func (r *Runner) Stop() {
 }
 
 func (r *Runner) initConfigServerUrls() {
-	if len(r.MetaServersParsed) > 0 {
+	if len(r.MetaServersParsed) > 0 || len(r.ConfigServersParsed) > 0 {
 		return
 	}
 

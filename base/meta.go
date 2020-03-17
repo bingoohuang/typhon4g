@@ -17,7 +17,8 @@ type MetaService struct {
 
 // Start starts the meta refreshing loop
 func (m MetaService) Start(ctx context.Context) {
-	if len(m.MetaServersParsed) == 0 { // 没有配置metaServers
+	if len(m.MetaServersParsed) == 0 {
+		logrus.Infof("no meta server addresses configured, meta server will not start")
 		return
 	}
 
