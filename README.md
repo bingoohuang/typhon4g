@@ -71,12 +71,13 @@ import (
 func init() {
     // 注册viper读取
     ty := typhon4g.LoadStart()
-	ty.Register("application.properties", &typhon4g.ViperListener{})
+	ty.Register("application.properties", &typhon4g.ViperListener{Prefix:""})
+	ty.Register("hello.yaml", &typhon4g.ViperListener{Prefix:"hello."})
 }
 
 func main() {
     fmt.Println("name:", viper.GetString("name"))
-    fmt.Println("age:", viper.GetInt("age"))
-    fmt.Println("adult", viper.GetBool("adult"))
+    fmt.Println("age:", viper.GetInt("hello.age"))
+    fmt.Println("adult", viper.GetBool("hello.adult"))
 }
 ```

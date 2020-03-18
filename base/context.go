@@ -116,9 +116,11 @@ func (c *Context) LoadConfCache(confFile string) *FileContent {
 	c.cacheLock.RLock()
 	defer c.cacheLock.RUnlock()
 
-	if fc, ok := c.Cache[confFile]; ok {
+	if fc, ok := c.Cache[confFile]; ok && fc != nil {
 		return fc
 	}
+
+	c.Cache[confFile] = nil
 
 	return nil
 }

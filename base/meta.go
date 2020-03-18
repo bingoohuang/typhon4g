@@ -38,6 +38,8 @@ func (m MetaService) Start(ctx context.Context) {
 // Try try to refresh meta.
 func (m MetaService) Try() {
 	gor.IterateSlice(m.MetaServersParsed, -1, func(url string) bool {
+		logrus.Debugf("meta url %s", url)
+
 		configServers, err := m.Client.MetaGet(url)
 		if err != nil {
 			logrus.Warnf("fail to MetaGet %v", err)

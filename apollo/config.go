@@ -3,11 +3,14 @@ package apollo
 import (
 	"fmt"
 	"net/url"
+	"path/filepath"
+	"strings"
+
+	"github.com/bingoohuang/properties"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/bingoohuang/gor"
-	"github.com/bingoohuang/properties"
 	"github.com/bingoohuang/typhon4g/base"
 )
 
@@ -49,15 +52,12 @@ func (c *Client) readConfig(namespace string, wait chan bool) {
 			return false
 		}
 
-		props, _ := properties.LoadMap(result.Configurations)
-
 		c.releaseKeys.Store(namespace, result.ReleaseKey)
-
 		c.fileRaw <- base.FileRawWait{
 			FileRaw: base.FileRaw{
 				AppID:    c.AppID,
 				ConfFile: namespace,
-				Content:  props.String(),
+				Content:  parseContent(result),
 				Crc:      "",
 			},
 			Wait: wait,
@@ -65,6 +65,16 @@ func (c *Client) readConfig(namespace string, wait chan bool) {
 
 		return true
 	})
+}
+
+func parseContent(result configResult) string {
+	switch strings.ToLower(filepath.Ext(result.NamespaceName)) {
+	case ".properties":
+		props, _ := properties.LoadMap(result.Configurations)
+		return props.String()
+	default:
+		return result.Configurations["content"]
+	}
 }
 
 func (c *Client) configAddr(addr, namespace, releaseKey string) string {

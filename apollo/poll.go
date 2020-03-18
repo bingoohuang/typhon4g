@@ -16,13 +16,13 @@ import (
 
 // notification defines the polling request and response structure of apollo polling service.
 type notification struct {
-	NamespaceName  string `json:"namespaceName,omitempty"`
-	NotificationID int64  `json:"notificationId,omitempty"`
+	Namespace string `json:"namespaceName,omitempty"`
+	NotifyID  int64  `json:"notificationId,omitempty"`
 }
 
 // Polling polling the specified addr.
 func (c *Client) Polling(configServer string) error {
-	notifications, filenameNamespaceMap := c.makeNotifications()
+	notifications, namespaceMap := c.makeNotifications()
 	if len(notifications) == 0 {
 		logrus.Infof("nothing to polling")
 		return errors.New("nothing to polling")
@@ -33,7 +33,6 @@ func (c *Client) Polling(configServer string) error {
 	logrus.Infof("polling addr %s", pollingAddr)
 
 	var rsp []notification
-
 	if err := c.ReqPoll.RestGet(pollingAddr, &rsp); err != nil {
 		if os.IsTimeout(err) {
 			logrus.Infof("normal polling timeout %s", pollingAddr)
@@ -44,8 +43,9 @@ func (c *Client) Polling(configServer string) error {
 	}
 
 	for _, u := range rsp {
-		fileName := filenameNamespaceMap[u.NamespaceName]
-		c.notifications.Store(fileName, u.NotificationID)
+		fileName := namespaceMap[u.Namespace]
+
+		c.notifications.Store(fileName, u.NotifyID)
 		c.readConfig(fileName, nil)
 	}
 
@@ -59,12 +59,12 @@ func (c *Client) makeNotifications() ([]notification, map[string]string) {
 
 	c.notifications.Range(func(k, v interface{}) bool {
 		f := k.(string)
-		namespace := strings.TrimSuffix(f, path.Ext(f))
-		m[namespace] = f
-		notifications = append(notifications, notification{
-			NamespaceName:  namespace,
-			NotificationID: v.(int64),
-		})
+
+		m[strings.TrimSuffix(f, path.Ext(f))] = f
+		m[f] = f
+
+		notifications = append(notifications, notification{Namespace: f, NotifyID: v.(int64)})
+
 		return true
 	})
 
@@ -72,15 +72,14 @@ func (c *Client) makeNotifications() ([]notification, map[string]string) {
 }
 
 func (c *Client) pollingAddr(configServer string, notifications []notification) string {
-	notificationBytes, _ := json.Marshal(notifications)
-	json := string(notificationBytes)
+	notifyBytes, _ := json.Marshal(notifications)
 
 	return fmt.Sprintf("%s/notifications/v2?appId=%s&cluster=%s&dataCenter=%s&notifications=%s&ip=%s",
 		base.HTPPAddr(configServer),
 		url.QueryEscape(c.AppID),
 		url.QueryEscape(c.Cluster),
 		url.QueryEscape(c.DataCenter),
-		url.QueryEscape(json),
+		url.QueryEscape(string(notifyBytes)),
 		url.QueryEscape(c.localIP),
 	)
 }

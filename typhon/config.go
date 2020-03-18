@@ -18,7 +18,11 @@ func (c *Client) ReadConfig(confFile string, wait bool) <-chan bool {
 	var waitCh chan bool
 
 	if wait {
-		waitCh = make(chan bool)
+		waitCh = make(chan bool, 1)
+	}
+
+	if c.tryCache(confFile, waitCh) {
+		return waitCh
 	}
 
 	gor.IterateSlice(c.ConfigServersParsed, -1, func(addr string) bool {
@@ -27,6 +31,18 @@ func (c *Client) ReadConfig(confFile string, wait bool) <-chan bool {
 	})
 
 	return waitCh
+}
+
+func (c *Client) tryCache(confFile string, waitCh chan bool) bool {
+	if fc := c.LoadConfCache(confFile); fc != nil {
+		if waitCh != nil {
+			waitCh <- true
+		}
+
+		return true
+	}
+
+	return false
 }
 
 type configRsp struct {
@@ -39,12 +55,14 @@ type configRsp struct {
 func (c *Client) readConfig(url, confFile string, wait chan bool, isPoll bool) error {
 	confFileCrc := c.createConfFileCrcs(confFile)
 	if confFileCrc == "" {
+		logrus.Warnf("nothing to read")
+
 		return nil
 	}
 
 	clientURL := url + "?confFileCrc=" + confFileCrc
 
-	logrus.Debugf("config url %s", clientURL)
+	logrus.Debugf("polling %v config url %s", isPoll, clientURL)
 
 	var rsp configRsp
 
@@ -64,6 +82,8 @@ func (c *Client) readConfig(url, confFile string, wait chan bool, isPoll bool) e
 
 		return err
 	}
+
+	logrus.Debugf("%s response %+v", clientURL, rsp)
 
 	if len(rsp.Data) == 0 {
 		c.fileRaw <- base.FileRawWait{
@@ -102,7 +122,11 @@ func (c *Client) CreateConfFileCrcs() string {
 	confFileCrc := make([]string, 0)
 
 	c.WalkFileContents(func(cf string, fc *base.FileContent) {
-		confFileCrc = append(confFileCrc, fc.ConfFile+":"+fc.Crc)
+		if fc == nil {
+			confFileCrc = append(confFileCrc, cf+":0")
+		} else {
+			confFileCrc = append(confFileCrc, fc.ConfFile+":"+fc.Crc)
+		}
 	})
 
 	return strings.Join(confFileCrc, ",")

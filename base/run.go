@@ -47,12 +47,16 @@ func (r *Runner) ConsumeChan() {
 }
 
 func (r *Runner) updateCache(raw FileRawWait) {
+	if raw.ConfFile == "" {
+		return
+	}
+
 	r.cacheLock.Lock()
 	defer r.cacheLock.Unlock()
 
 	changed := false
 
-	if old, ok := r.Cache[raw.ConfFile]; !ok {
+	if old, ok := r.Cache[raw.ConfFile]; !ok || old == nil {
 		old = &FileContent{
 			FileRaw: FileRaw{
 				AppID:    raw.AppID,
@@ -204,11 +208,10 @@ func (r *Runner) triggerChange(confFileName string, old, new FileRaw) []ClientRe
 
 	for _, l := range listeners {
 		msg, ok := l.OnChange(ConfFileChangeEvent{
-			ConfFile:       confFileName,
-			ConfFileFormat: PropertiesFmt,
-			Old:            old.Content,
-			Current:        new.Content,
-			ChangedTime:    time.Now(),
+			ConfFile:    confFileName,
+			Old:         old.Content,
+			Current:     new.Content,
+			ChangedTime: time.Now(),
 		})
 
 		items = append(items, ClientReportItem{

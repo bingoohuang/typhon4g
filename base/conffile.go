@@ -30,6 +30,6 @@ func NewConfFile(confFile, raw string) ConfFile {
 	case ".properties":
 		return NewPropertiesConfFile(confFile, raw)
 	default:
-		return NewTxtConfFile(confFile, raw)
+		return NewRawConfFile(confFile, raw)
 	}
 }

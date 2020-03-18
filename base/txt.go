@@ -1,16 +1,14 @@
 package base
 
-// TxtConfFile defines the txt format of conf file
-type TxtConfFile struct {
+// RawConfFile defines the txt format of conf file
+type RawConfFile struct {
 	Conf
 }
 
 // ConfFormat gets the format of conf file
-func (t *TxtConfFile) ConfFormat() ConfFmt {
-	return TxtFmt
-}
+func (t *RawConfFile) ConfFormat() ConfFmt { return TxtFmt }
 
-// NewTxtConfFile new a TxtConfFile.
-func NewTxtConfFile(confFile, raw string) *TxtConfFile {
-	return &TxtConfFile{Conf{confFile: confFile, raw: raw}}
+// NewRawConfFile new a RawConfFile.
+func NewRawConfFile(confFile, raw string) *RawConfFile {
+	return &RawConfFile{Conf{confFile: confFile, raw: raw}}
 }

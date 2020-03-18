@@ -34,11 +34,10 @@ func (f *FileContent) init() {
 
 // ConfFileChangeEvent structured the change event content.
 type ConfFileChangeEvent struct {
-	ConfFile       string    `json:"confFile"`
-	ConfFileFormat ConfFmt   `json:"confFileFormat"`
-	Old            string    `json:"old"`
-	Current        string    `json:"current"`
-	ChangedTime    time.Time `json:"changedTime"` // 变更发生的时间(毫秒）
+	ConfFile    string    `json:"confFile"`
+	Old         string    `json:"old"`
+	Current     string    `json:"current"`
+	ChangedTime time.Time `json:"changedTime"` // 变更发生的时间(毫秒）
 }
 
 // ClientReportItem defines the structure of client listener report item.

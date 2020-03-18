@@ -3,6 +3,7 @@ module github.com/bingoohuang/typhon4g
 go 1.12
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/bingoohuang/gonet v0.0.0-20200224141149-35b28c91a637
 	github.com/bingoohuang/gor v0.0.0-20200317032100-fbdc43eac8fa
 	github.com/bingoohuang/gou v0.0.0-20200225004418-9b3655665c46
@@ -13,5 +14,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.6.1
+	github.com/stretchr/testify v1.5.1
 	github.com/thoas/go-funk v0.6.0
+	gopkg.in/yaml.v2 v2.2.7
 )
