@@ -10,4 +10,5 @@ const (
 	TxtFmt
 )
 
+// https://github.com/alvaroloes/enumer
 //go:generate enumer -type=ConfFmt -json
