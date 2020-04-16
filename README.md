@@ -1,5 +1,12 @@
 # typhon4g
-typhon/apollo client for golang [![Go Report Card](https://goreportcard.com/badge/github.com/bingoohuang/typhon4g)](https://goreportcard.com/report/github.com/bingoohuang/typhon4g)
+
+[![Travis CI](https://img.shields.io/travis/bingoohuang/typhon4g/master.svg?style=flat-square)](https://travis-ci.com/bingoohuang/typhon4g)
+[![Software License](https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square)](https://github.com/bingoohuang/typhon4g/blob/master/LICENSE.md)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/bingoohuang/typhon4g)
+[![Coverage Status](http://codecov.io/github/bingoohuang/typhon4g/coverage.svg?branch=master)](http://codecov.io/github/bingoohuang/typhon4g?branch=master)
+[![goreport](https://www.goreportcard.com/badge/github.com/bingoohuang/typhon4g)](https://www.goreportcard.com/report/github.com/bingoohuang/typhon4g)
+
+typhon/apollo client for golang
 
 
 ## Setup config file like the following:
@@ -28,8 +35,8 @@ configServers =
 configRefreshInterval = 5m
 # 配置刷新是读取超时时间，默认5s
 # configReadTimeout = 5s
-# Http连接超时时间，默认1秒
-# connectTimeout = 1s
+# Http连接超时时间，默认60s
+# connectTimeout = 60s
 # 长连接保持时间，默认70秒，服务器端是一分钟，这里配置比服务器端多一点点即可
 # pollingReadTimeout = 70s
 

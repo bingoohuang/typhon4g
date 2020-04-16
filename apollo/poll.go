@@ -34,8 +34,10 @@ func (c *Client) Polling(configServer string) error {
 
 	var rsp []notification
 	if err := c.ReqPoll.RestGet(pollingAddr, &rsp); err != nil {
-		if os.IsTimeout(err) {
-			logrus.Infof("normal polling timeout %s", pollingAddr)
+		isTimeout := os.IsTimeout(err)
+		logrus.Warnf("normal polling %s, isTimeout %v, error %v", pollingAddr, isTimeout, err)
+
+		if isTimeout {
 			return nil
 		}
 

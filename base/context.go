@@ -42,7 +42,7 @@ type ContextConfig struct {
 	ConfigServers string
 
 	// ConnectTimeoutMillis defines the http connect timeout in millis.
-	ConnectTimeout time.Duration `default:"1s"`
+	ConnectTimeout time.Duration `default:"60s"`
 	// PollingReadTimeoutMillis defines the read timeout in millis of config polling
 	PollingReadTimeout time.Duration `default:"70s"`
 	// RetryNetworkSleepSeconds defines the sleeping time in seconds before retry.

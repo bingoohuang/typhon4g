@@ -11,7 +11,7 @@ require (
 	github.com/bingoohuang/properties v0.0.0-20200317032644-f7140f5dcb56
 	github.com/bingoohuang/snow v0.0.0-20200312010530-a2f5030389b5
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/pkg/errors v0.9.1
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.6.1
 	github.com/stretchr/testify v1.5.1
