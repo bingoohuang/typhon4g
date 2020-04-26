@@ -3,7 +3,8 @@ package apollo
 import (
 	"sync"
 
-	"github.com/bingoohuang/snow"
+	"github.com/bingoohuang/ip"
+
 	"github.com/bingoohuang/typhon4g/base"
 )
 
@@ -21,7 +22,7 @@ type Client struct {
 func MakeClient(c *base.Context, fileRaw chan base.FileRawWait) *Client {
 	localIP := c.LocalIP
 	if localIP == "" {
-		localIP = snow.InferHostIPv4("")
+		localIP, _ = ip.MainIP()
 	}
 
 	return &Client{

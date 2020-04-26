@@ -8,7 +8,6 @@
 
 typhon/apollo client for golang
 
-
 ## Setup config file like the following:
  
 ```properties
