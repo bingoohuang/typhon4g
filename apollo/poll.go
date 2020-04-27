@@ -35,12 +35,16 @@ func (c *Client) Polling(configServer string) error {
 
 	var rsp []notification
 	if err := c.ReqPoll.RestGet(pollingAddr, &rsp); err != nil {
-		isTimeout := os.IsTimeout(err)
-		logrus.Warnf("normal polling %s, isTimeout %v, error %v", pollingAddr, isTimeout, err)
+		if err.Error() == "304 Not Modified" {
+			return nil
+		}
 
+		isTimeout := os.IsTimeout(err)
 		if isTimeout {
 			return nil
 		}
+
+		logrus.Warnf("normal polling %s, isTimeout %v, error %v", pollingAddr, isTimeout, err)
 
 		return err
 	}
