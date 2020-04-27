@@ -74,7 +74,7 @@ func (c *Client) readConfig(url, confFile string, wait chan bool, isPoll bool) e
 	err := req.RestGet(clientURL, &rsp)
 	if err != nil {
 		if isPoll && os.IsTimeout(err) {
-			logrus.Infof("normal polling timeout %s", clientURL)
+			logrus.Debugf("normal polling timeout %s", clientURL)
 			return nil
 		}
 

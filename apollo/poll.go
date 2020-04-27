@@ -24,13 +24,14 @@ type notification struct {
 func (c *Client) Polling(configServer string) error {
 	notifications, namespaceMap := c.makeNotifications()
 	if len(notifications) == 0 {
-		logrus.Infof("nothing to polling")
+		logrus.Debugf("nothing to polling")
+
 		return errors.New("nothing to polling")
 	}
 
 	pollingAddr := c.pollingAddr(configServer, notifications)
 
-	logrus.Infof("polling addr %s", pollingAddr)
+	logrus.Debugf("polling addr %s", pollingAddr)
 
 	var rsp []notification
 	if err := c.ReqPoll.RestGet(pollingAddr, &rsp); err != nil {

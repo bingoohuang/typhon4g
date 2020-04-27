@@ -45,7 +45,7 @@ func (c *Client) readConfig(namespace string, wait chan bool) {
 	gor.IterateSlice(servers, -1, func(addr string) bool {
 		configAddr := c.configAddr(addr, namespace, releaseKey.(string))
 
-		logrus.Infof("config address %s", configAddr)
+		logrus.Debugf("config address %s", configAddr)
 
 		var result configResult
 		if err := c.Req.RestGet(configAddr, &result); err != nil {

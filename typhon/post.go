@@ -65,7 +65,7 @@ func (c *Client) TryUploadReport(url string, report *ClientReport) bool {
 
 	reportURL := strings.Replace(url, "/client/config/", "/admin/report/", 1)
 	rspBody, err := c.Req.RestPostFn(reportURL, report, &rsp, c.basicAuth)
-	logrus.Infof("report response %s, error %v", string(rspBody), err)
+	logrus.Debugf("report response %s, error %v", string(rspBody), err)
 
 	return rsp.Status == 200
 }
