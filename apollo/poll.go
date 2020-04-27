@@ -39,12 +39,11 @@ func (c *Client) Polling(configServer string) error {
 			return nil
 		}
 
-		isTimeout := os.IsTimeout(err)
-		if isTimeout {
+		if os.IsTimeout(err) {
 			return nil
 		}
 
-		logrus.Warnf("normal polling %s, isTimeout %v, error %v", pollingAddr, isTimeout, err)
+		logrus.Warnf("normal polling %s,  error %v", pollingAddr, err)
 
 		return err
 	}
